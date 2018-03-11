@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#db6161</color>
+    <color name="colorPrimaryDark">#157241</color>
+    <color name="colorAccent">#db6161</color>
+    <color name="colorBackground">#f9f6f4</color>
+    <color name="colorPrimaryLight">#db6161</color>
+    <color name="colorAccentLight">#75b855</color>
+</resources>
+<!--
+#ad3838 dark pink
+#db6161 light pink
+#f9f6f4 weird white
+#75b855 medjo dark green
+#157241 dark green
+-->
