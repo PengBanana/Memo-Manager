@@ -1,6 +1,8 @@
 package com.example.hp.memomanagerapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -8,15 +10,18 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ViewMemoActivity extends AppCompatActivity {
-    private List<Memo> memoList = new ArrayList<>();
+    private ArrayList<Memo> memoList = new ArrayList<>();
     private RecyclerView recyclerView;
     private MemoAdapter mAdapter;
     @Override
@@ -33,7 +38,12 @@ public class ViewMemoActivity extends AppCompatActivity {
         recyclerView.setAdapter(mAdapter);
 
         //Insert Sample Data
-        insertSampleDate();
+        insertSampleData();
+
+        //Trial on Item Select at recycler view
+
+        //TODO: debug on item CLick
+
         //Toolbar and FAB
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -47,7 +57,7 @@ public class ViewMemoActivity extends AppCompatActivity {
         });
     }
 
-    private void insertSampleDate() {
+    private void insertSampleData() {
         //String title, String category, String deadline, String priorityLevel, String notificationIntervals, String notificationTime, String status
         Memo sampleMemo = new
                 Memo("WIR-TEC Beta Demo",
@@ -107,10 +117,11 @@ public class ViewMemoActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        /*if (id == R.id.action_settings) {
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
+
 }

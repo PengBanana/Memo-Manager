@@ -19,7 +19,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".newMemoActivity"></activity>
+        <activity android:name=".newMemoActivity" />
+        <activity android:name=".ViewMemoDetails"></activity>
     </application>
 
 </manifest>

@@ -18,7 +18,18 @@ public class Memo {
     private String status;
     private String note;
 
-    public Memo(String title, String category, String deadline, String priorityLevel, String notificationIntervals, String notificationTime, String status, String note) {
+    public static final String TITLE_CODE="title";
+    public static final String CATEGORY_CODE="category";
+    public static final String DEADLINE_CODE="deadline";
+    public static final String PRIORITYLEVEL_CODE="";
+    public static final String NOTIFICATIONINTERVALS_CODE="notificiationIntervals";
+    public static final String NOTIFICATIONTIME_CODE="notificationTime";
+    public static final String STATUS_CODE="status";
+    public static final String NOTE_CODE="note";
+
+    public Memo(String title, String category, String deadline,
+                String priorityLevel, String notificationIntervals,
+                String notificationTime, String status, String note) {
         this.title = title;
         this.category = category;
         this.deadline = deadline;

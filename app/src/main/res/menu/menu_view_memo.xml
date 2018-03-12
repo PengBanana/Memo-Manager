@@ -3,8 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.hp.memomanagerapplication.ViewMemoActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_sortbyDate"
+        android:orderInCategory="102"
+        android:title="sort by Date" />
+    <item
+        android:id="@+id/action_sortbyPriority"
+        android:orderInCategory="103"
+        android:title="sort by Priority" />
+    <item
+        android:id="@+id/action_sortbyName"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:title="sort by Name" />
+    <item
+        android:id="@+id/action_sortbyStatus"
+        android:orderInCategory="104"
+        android:title="sort by Status" />
 </menu>
