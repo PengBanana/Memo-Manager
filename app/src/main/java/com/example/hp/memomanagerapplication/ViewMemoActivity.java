@@ -4,20 +4,39 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class ViewMemoActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
 
+public class ViewMemoActivity extends AppCompatActivity {
+    private List<Memo> memoList = new ArrayList<>();
+    private RecyclerView recyclerView;
+    private MemoAdapter mAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_memo);
+
+        //RecyclerView and Adapter Call
+        recyclerView = (RecyclerView) findViewById(R.id.rv_itemList);
+        mAdapter = new MemoAdapter(memoList);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(mAdapter);
+
+        //Insert Sample Data
+        insertSampleDate();
+        //Toolbar and FAB
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_addItem);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -26,6 +45,51 @@ public class ViewMemoActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+    }
+
+    private void insertSampleDate() {
+        //String title, String category, String deadline, String priorityLevel, String notificationIntervals, String notificationTime, String status
+        Memo sampleMemo = new
+                Memo("WIR-TEC Beta Demo",
+                "Academic",
+                "March 14,2018",
+                "Highest",
+                "Weekly",
+                "9:00PM",
+                "Active",
+                "User interface Only");
+        memoList.add(sampleMemo);
+        sampleMemo = new
+                Memo("ITMETHDS Paper",
+                "Academic",
+                "March 16,2018",
+                "High",
+                "Daily",
+                "8:00AM",
+                "Active",
+                "Thesis paper");
+        memoList.add(sampleMemo);
+        sampleMemo = new
+                Memo("LSCS Internal Meeting",
+                "Organization",
+                "March 09,2018",
+                "Medium",
+                "Daily",
+                "10:00AM",
+                "Complete",
+                "Updates, Problems and Solutions");
+        memoList.add(sampleMemo);
+        sampleMemo = new
+                Memo("BMS Unplugged Linkages",
+                "Organization",
+                "March 10,2018",
+                "Low",
+                "Daily",
+                "9:00AM",
+                "Overdue",
+                "Remind External EVP and Corporel VP");
+        memoList.add(sampleMemo);
+
     }
 
     @Override

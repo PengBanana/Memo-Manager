@@ -18,11 +18,22 @@
             android:background="@color/colorAccentLight"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-        <include
-            layout="@layout/content_view_memo"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <include
+                    layout="@layout/content_view_memo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+        </ScrollView>
 
     </android.support.design.widget.AppBarLayout>
 
