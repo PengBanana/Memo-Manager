@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ViewMemoActivity extends AppCompatActivity {
+    public static int NEWMEMOACTIVITY_CODE = 1;
     private ArrayList<Memo> memoList = new ArrayList<>();
     private RecyclerView recyclerView;
     private MemoAdapter mAdapter;
@@ -51,8 +52,11 @@ public class ViewMemoActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Create New Memo", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //Launch activity create New Memo
+                Intent newMemoActivityIntent = new Intent(ViewMemoActivity.this, newMemoActivity.class);
+                ViewMemoActivity.this.startActivityForResult(newMemoActivityIntent, NEWMEMOACTIVITY_CODE);
+                /*Snackbar.make(view, "Create New Memo", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
             }
         });
     }
