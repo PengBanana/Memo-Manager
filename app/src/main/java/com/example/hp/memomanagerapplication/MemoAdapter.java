@@ -1,6 +1,7 @@
 package com.example.hp.memomanagerapplication;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
@@ -38,8 +39,11 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MyViewHolder> 
                     //gets item position
                     int itemClicked=getAdapterPosition();
                     Log.d("MyViewHolder","Clicked Item Number:"+itemClicked);
-                    Intent viewMemoDetails = new Intent(view.getContext(), ViewMemoDetails.class);
+                    Intent viewMemoDetailsIntent = new Intent(view.getContext(), ViewMemoDetails.class);
                     Memo memoItem = memoList.get(itemClicked);
+                    int itemId = memoItem.getId();
+                    /*
+                    viewMemoDetails.putExtra("id",memoItem.getId());
                     viewMemoDetails.putExtra("title",memoItem.getTitle());
                     viewMemoDetails.putExtra("category",memoItem.getCategory());
                     viewMemoDetails.putExtra("deadline",memoItem.getDeadline());
@@ -48,11 +52,12 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MyViewHolder> 
                     viewMemoDetails.putExtra("time",memoItem.getNotificationTime());
                     viewMemoDetails.putExtra("level",memoItem.getPriorityLevel());
                     viewMemoDetails.putExtra("status",memoItem.getStatus());
-
+                    */
                     //viewMemoDetails.putExtra("itemClicked",itemClicked);
                     //ArrayList m=getMemoList();
                     //viewMemoDetails.putParcelableArrayListExtra("memoList", m);
-                    view.getContext().startActivity(viewMemoDetails);
+                    viewMemoDetailsIntent.putExtra("itemId",itemId);
+                    view.getContext().startActivity(viewMemoDetailsIntent);
                 }
             });
         }
@@ -78,7 +83,17 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MyViewHolder> 
         holder.deadline.setText(memo.getDeadline());
         //TODO: limit the note to a number of characters
         holder.preview.setText(String.valueOf(memo.getNote()));
-        holder.status.setText(String.valueOf(memo.getStatus()));
+        String status= memo.getStatus();
+        holder.status.setText(String.valueOf(status));
+        if(status.equalsIgnoreCase("active")){
+            holder.status.setTextColor(Color.parseColor("#e7b416"));
+        }
+        else if(status.equalsIgnoreCase("complete")){
+            holder.status.setTextColor(Color.parseColor("#99c140"));
+        }
+        else if(status.equalsIgnoreCase("overdue")){
+            holder.status.setTextColor(Color.parseColor("#cc3232"));
+        }
     }
 
     @Override

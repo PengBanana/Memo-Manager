@@ -9,6 +9,7 @@ import java.sql.Time;
 
 public class Memo {
     //TODO: MEMO class
+    private int id;
     private String title;
     private String category;
     private String deadline;
@@ -18,10 +19,11 @@ public class Memo {
     private String status;
     private String note;
 
+    public static final String ID_CODE="id";
     public static final String TITLE_CODE="title";
     public static final String CATEGORY_CODE="category";
     public static final String DEADLINE_CODE="deadline";
-    public static final String PRIORITYLEVEL_CODE="";
+    public static final String PRIORITYLEVEL_CODE="priorityLevel";
     public static final String NOTIFICATIONINTERVALS_CODE="notificiationIntervals";
     public static final String NOTIFICATIONTIME_CODE="notificationTime";
     public static final String STATUS_CODE="status";
@@ -38,6 +40,9 @@ public class Memo {
         this.notificationTime = notificationTime;
         this.status = status;
         this.note = note;
+    }
+
+    public Memo() {
     }
 
     public String getTitle() {
@@ -102,5 +107,14 @@ public class Memo {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

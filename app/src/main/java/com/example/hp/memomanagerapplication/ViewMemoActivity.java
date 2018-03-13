@@ -1,6 +1,7 @@
 package com.example.hp.memomanagerapplication;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -25,10 +26,20 @@ public class ViewMemoActivity extends AppCompatActivity {
     private ArrayList<Memo> memoList = new ArrayList<>();
     private RecyclerView recyclerView;
     private MemoAdapter mAdapter;
+    public MySQLiteHelper db = new MySQLiteHelper(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_memo);
+
+        //upgrade database TODO: Ask sir about this upgrade
+        db.onUpgrade(db.getReadableDatabase(),0,1);
+
+
+        //Insert Sample Data
+        insertSampleData();
+        memoList = db.getAllMemos();
+        Log.d("memoList", memoList.toString());
 
         //RecyclerView and Adapter Call
         recyclerView = (RecyclerView) findViewById(R.id.rv_itemList);
@@ -37,13 +48,6 @@ public class ViewMemoActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
-
-        //Insert Sample Data
-        insertSampleData();
-
-        //Trial on Item Select at recycler view
-
-        //TODO: debug on item CLick
 
         //Toolbar and FAB
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -72,7 +76,7 @@ public class ViewMemoActivity extends AppCompatActivity {
                 "9:00PM",
                 "Active",
                 "User interface Only");
-        memoList.add(sampleMemo);
+        db.addMemo(sampleMemo);
         sampleMemo = new
                 Memo("ITMETHDS Paper",
                 "Academic",
@@ -82,7 +86,7 @@ public class ViewMemoActivity extends AppCompatActivity {
                 "8:00AM",
                 "Active",
                 "Thesis paper");
-        memoList.add(sampleMemo);
+        db.addMemo(sampleMemo);
         sampleMemo = new
                 Memo("LSCS Internal Meeting",
                 "Organization",
@@ -92,7 +96,7 @@ public class ViewMemoActivity extends AppCompatActivity {
                 "10:00AM",
                 "Complete",
                 "Updates, Problems and Solutions");
-        memoList.add(sampleMemo);
+        db.addMemo(sampleMemo);
         sampleMemo = new
                 Memo("BMS Unplugged Linkages",
                 "Organization",
@@ -102,8 +106,89 @@ public class ViewMemoActivity extends AppCompatActivity {
                 "9:00AM",
                 "Overdue",
                 "Remind External EVP and Corporel VP");
-        memoList.add(sampleMemo);
-
+        db.addMemo(sampleMemo);
+        
+        sampleMemo = new
+                Memo("WIR-TEC Beta Demo Again",
+                "Academic",
+                "April 14,2018",
+                "Highest",
+                "Weekly",
+                "9:00PM",
+                "Active",
+                "User interface Only");
+        db.addMemo(sampleMemo);
+        sampleMemo = new
+                Memo("ITMETHDS Paper Again",
+                "Academic",
+                "April 16,2018",
+                "High",
+                "Daily",
+                "8:00AM",
+                "Active",
+                "Thesis paper");
+        db.addMemo(sampleMemo);
+        sampleMemo = new
+                Memo("LSCS Internal Meeting Again",
+                "Organization",
+                "April 09,2018",
+                "Medium",
+                "Daily",
+                "10:00AM",
+                "Complete",
+                "Updates, Problems and Solutions");
+        db.addMemo(sampleMemo);
+        sampleMemo = new
+                Memo("BMS Unplugged Linkages Again",
+                "Organization",
+                "April 10,2018",
+                "Low",
+                "Daily",
+                "9:00AM",
+                "Overdue",
+                "Remind External EVP and Corporel VP");
+        db.addMemo(sampleMemo);
+        
+        sampleMemo = new
+                Memo("WIR-TEC Beta Demo Part 3",
+                "Academic",
+                "May 14,2018",
+                "Highest",
+                "Weekly",
+                "9:00PM",
+                "Active",
+                "User interface Only");
+        db.addMemo(sampleMemo);
+        sampleMemo = new
+                Memo("ITMETHDS Paper Part 3",
+                "Academic",
+                "May 16,2018",
+                "High",
+                "Daily",
+                "8:00AM",
+                "Active",
+                "Thesis paper");
+        db.addMemo(sampleMemo);
+        sampleMemo = new
+                Memo("LSCS Internal Meeting Part 3",
+                "Organization",
+                "May 09,2018",
+                "Medium",
+                "Daily",
+                "10:00AM",
+                "Complete",
+                "Updates, Problems and Solutions");
+        db.addMemo(sampleMemo);
+        sampleMemo = new
+                Memo("BMS Unplugged Linkages Part 3",
+                "Organization",
+                "May 10,2018",
+                "Low",
+                "Daily",
+                "9:00AM",
+                "Overdue",
+                "Remind External EVP and Corporel VP");
+        db.addMemo(sampleMemo);
     }
 
     @Override

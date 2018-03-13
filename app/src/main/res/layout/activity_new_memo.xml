@@ -201,11 +201,25 @@
                 </TableRow>
             </TableLayout>
 
-            <Button
-                android:id="@+id/btn_Submit"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="SUBMIT" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_Submit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="SUBMIT" />
+
+                <Button
+                    android:id="@+id/btn_Cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="CANCEL" />
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

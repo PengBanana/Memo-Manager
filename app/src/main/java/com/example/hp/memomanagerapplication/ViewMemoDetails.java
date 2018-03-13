@@ -1,5 +1,6 @@
 package com.example.hp.memomanagerapplication;
 
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -30,10 +31,14 @@ public class ViewMemoDetails extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Bundle extras = getIntent().getExtras();
-        int itemClicked=extras.getInt("itemClicked");
+        /*int itemClicked=extras.getInt("itemClicked");
         //ArrayList<Memo> memoList =(ArrayList<Memo>) extras.getParcelable("memoList");
         //Memo item = memoList.get(itemClicked);
         Memo item = new Memo(extras.getString("title"),extras.getString("category"),extras.getString("deadline"),extras.getString("level"),extras.getString("intervals"),extras.getString("time"),extras.getString("status"),extras.getString("note"));
+        item.setId(extras.getInt("id"));*/
+        int itemId = extras.getInt("itemId");
+        MySQLiteHelper db = new MySQLiteHelper(this);
+        Memo item=db.getMemo(itemId);
         title.setText(item.getTitle());
         category.setText(item.getCategory());
         deadline.setText(item.getDeadline());
@@ -41,5 +46,19 @@ public class ViewMemoDetails extends AppCompatActivity {
         notificationIntervals.setText(item.getNotificationIntervals());
         notificationTime.setText(item.getNotificationTime());
         note.setText(item.getNote());
+        String statustext = item.getStatus();
+        status.setText(statustext);
+        if(statustext.equalsIgnoreCase("active")){
+            status.setTextColor(Color.parseColor("#e7b416"));
+        }
+        else if(statustext.equalsIgnoreCase("complete")){
+            status.setTextColor(Color.parseColor("#99c140"));
+        }
+        else if(statustext.equalsIgnoreCase("overdue")){
+            status.setTextColor(Color.parseColor("#cc3232"));
+        }
+        else{
+            status.setTextColor(Color.parseColor("#e7b416"));
+        }
     }
 }
