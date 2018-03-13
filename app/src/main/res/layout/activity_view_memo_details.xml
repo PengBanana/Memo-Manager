@@ -205,7 +205,8 @@
                         android:layout_height="wrap_content"
                         android:text="status here"
                         android:textColor="@android:color/background_dark"
-                        android:textSize="20sp" />
+                        android:textSize="20sp"
+                        android:textStyle="italic" />
                 </TableRow>
 
                 <TableRow

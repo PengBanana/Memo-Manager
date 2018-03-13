@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ViewMemoActivity extends AppCompatActivity {
-    public static int NEWMEMOACTIVITY_CODE = 1;
+    public static final int NEWMEMOACTIVITY_CODE = 1;
     private ArrayList<Memo> memoList = new ArrayList<>();
     private RecyclerView recyclerView;
     private MemoAdapter mAdapter;
@@ -37,7 +37,7 @@ public class ViewMemoActivity extends AppCompatActivity {
 
 
         //Insert Sample Data
-        insertSampleData();
+        //insertSampleData();
         memoList = db.getAllMemos();
         Log.d("memoList", memoList.toString());
 
@@ -192,6 +192,35 @@ public class ViewMemoActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK){
+            switch (requestCode) {
+                case NEWMEMOACTIVITY_CODE:
+                    Log.d("new memo",requestCode+"");
+                    /*
+                    String title, String category, String deadline,
+                String priorityLevel, String notificationIntervals,
+                String notificationTime, String status, String note
+                     */
+                    Memo newItem = new Memo(
+                            data.getStringExtra(Memo.TITLE_CODE), data.getStringExtra(Memo.CATEGORY_CODE),
+                            data.getStringExtra(Memo.DEADLINE_CODE),data.getStringExtra(Memo.PRIORITYLEVEL_CODE),
+                            data.getStringExtra(Memo.NOTIFICATIONINTERVALS_CODE), data.getStringExtra(Memo.NOTIFICATIONTIME_CODE),
+                            data.getStringExtra(Memo.STATUS_CODE), data.getStringExtra(Memo.NOTE_CODE));
+                    db.addMemo(newItem);
+                    Log.d("memoListbeforeAdd:", memoList.size()+"");
+                    memoList.clear();
+                    memoList.addAll(db.getAllMemos());
+
+                    Log.d("memoListuponAdd:", memoList.size()+"");
+                    recyclerView.getAdapter().notifyDataSetChanged();
+                    break;
+            }
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_view_memo, menu);
@@ -212,5 +241,4 @@ public class ViewMemoActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
 }
