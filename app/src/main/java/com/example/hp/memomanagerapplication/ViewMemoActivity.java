@@ -240,6 +240,9 @@ public class ViewMemoActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
+            memoList.clear();
+            memoList.addAll(db.getAllMemos());
+            recyclerView.getAdapter().notifyDataSetChanged();
             return true;
         }
 
