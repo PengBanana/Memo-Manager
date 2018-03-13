@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,13 +28,13 @@ public class ViewMemoActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private MemoAdapter mAdapter;
     public MySQLiteHelper db = new MySQLiteHelper(this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_memo);
-
         //upgrade database TODO: Ask sir about this upgrade
-        db.onUpgrade(db.getReadableDatabase(),0,1);
+        //db.onUpgrade(db.getReadableDatabase(),0,0);
 
 
         //Insert Sample Data
@@ -63,6 +64,9 @@ public class ViewMemoActivity extends AppCompatActivity {
                         .setAction("Action", null).show();*/
             }
         });
+
+        //swipe refresh attempt
+
     }
 
     private void insertSampleData() {
@@ -235,9 +239,9 @@ public class ViewMemoActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        /*if (id == R.id.action_settings) {
+        if (id == R.id.action_refresh) {
             return true;
-        }*/
+        }
 
         return super.onOptionsItemSelected(item);
     }

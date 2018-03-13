@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.hp.memomanagerapplication.ViewMemoActivity">
     <item
+        android:id="@+id/action_refresh"
+        android:title="refresh" />
+    <item
         android:id="@+id/action_sortbyDate"
         android:orderInCategory="102"
         android:title="sort by Date" />

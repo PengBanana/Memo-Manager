@@ -15,6 +15,7 @@ public class ViewMemoDetails extends AppCompatActivity {
     public static final int EDITITEM_CODE=2;
     public int itemId;
     public TextView title,category,deadline,priorityLevel,notificationIntervals,notificationTime,status,note;
+    public MySQLiteHelper db = new MySQLiteHelper(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -39,7 +40,48 @@ public class ViewMemoDetails extends AppCompatActivity {
         Memo item = new Memo(extras.getString("title"),extras.getString("category"),extras.getString("deadline"),extras.getString("level"),extras.getString("intervals"),extras.getString("time"),extras.getString("status"),extras.getString("note"));
         item.setId(extras.getInt("id"));*/
         itemId = extras.getInt("itemId");
-        MySQLiteHelper db = new MySQLiteHelper(this);
+        setUI(itemId);
+
+        btn_edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent editItemIntent = new Intent(ViewMemoDetails.this, newMemoActivity.class);
+                editItemIntent.putExtra(Memo.TITLE_CODE, title.getText().toString());
+                editItemIntent.putExtra(Memo.CATEGORY_CODE, category.getText().toString());
+                editItemIntent.putExtra(Memo.DEADLINE_CODE, deadline.getText().toString());
+                editItemIntent.putExtra(Memo.PRIORITYLEVEL_CODE, priorityLevel.getText().toString());
+                editItemIntent.putExtra(Memo.NOTIFICATIONINTERVALS_CODE, notificationIntervals.getText().toString());
+                editItemIntent.putExtra(Memo.NOTIFICATIONTIME_CODE, notificationTime.getText().toString());
+                editItemIntent.putExtra(Memo.STATUS_CODE, status.getText().toString());
+                editItemIntent.putExtra(Memo.NOTE_CODE, note.getText().toString());
+                editItemIntent.putExtra("action", EDITITEM_CODE);
+                editItemIntent.putExtra(Memo.ID_CODE, itemId);
+                ViewMemoDetails.this.startActivityForResult(editItemIntent, EDITITEM_CODE);
+            }
+        });
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case EDITITEM_CODE:
+                Memo newItem = new Memo(
+                        data.getStringExtra(Memo.TITLE_CODE), data.getStringExtra(Memo.CATEGORY_CODE),
+                        data.getStringExtra(Memo.DEADLINE_CODE),data.getStringExtra(Memo.PRIORITYLEVEL_CODE),
+                        data.getStringExtra(Memo.NOTIFICATIONINTERVALS_CODE), data.getStringExtra(Memo.NOTIFICATIONTIME_CODE),
+                        data.getStringExtra(Memo.STATUS_CODE), data.getStringExtra(Memo.NOTE_CODE));
+                newItem.setId(itemId);
+                db.updateMemo(newItem);
+                setUI(itemId);
+                break;
+        }
+
+    }
+
+    public void setUI(int itemId){
+
         Memo item=db.getMemo(itemId);
         title.setText(item.getTitle());
         category.setText(item.getCategory());
@@ -62,25 +104,5 @@ public class ViewMemoDetails extends AppCompatActivity {
         else{
             status.setTextColor(Color.parseColor("#e7b416"));
         }
-
-        btn_edit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent editItemIntent = new Intent(ViewMemoDetails.this, newMemoActivity.class);
-                editItemIntent.putExtra(Memo.TITLE_CODE, title.getText().toString());
-                editItemIntent.putExtra(Memo.CATEGORY_CODE, category.getText().toString());
-                editItemIntent.putExtra(Memo.DEADLINE_CODE, deadline.getText().toString());
-                editItemIntent.putExtra(Memo.PRIORITYLEVEL_CODE, priorityLevel.getText().toString());
-                editItemIntent.putExtra(Memo.NOTIFICATIONINTERVALS_CODE, notificationIntervals.getText().toString());
-                editItemIntent.putExtra(Memo.NOTIFICATIONTIME_CODE, notificationTime.getText().toString());
-                editItemIntent.putExtra(Memo.STATUS_CODE, status.getText().toString());
-                editItemIntent.putExtra(Memo.NOTE_CODE, note.getText().toString());
-                editItemIntent.putExtra("action", EDITITEM_CODE);
-                editItemIntent.putExtra(Memo.ID_CODE, itemId);
-                ViewMemoDetails.this.startActivityForResult(editItemIntent, EDITITEM_CODE);
-            }
-        });
     }
-
-
 }
