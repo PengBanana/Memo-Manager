@@ -246,6 +246,7 @@ public class ViewMemoActivity extends AppCompatActivity {
             return true;
         }
 
+
         return super.onOptionsItemSelected(item);
     }
 }

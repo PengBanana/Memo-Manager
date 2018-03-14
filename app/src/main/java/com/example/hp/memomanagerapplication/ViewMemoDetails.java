@@ -22,6 +22,8 @@ public class ViewMemoDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_memo_details);
         Button btn_edit = (Button) findViewById(R.id.btn_editItem);
+        Button btn_cancel = (Button) findViewById(R.id.btn_Cancel);
+        Button btn_delete = (Button) findViewById(R.id.btn_delete);
         title = (TextView) findViewById(R.id.tv_title);
         category = (TextView) findViewById(R.id.tv_category);
         deadline = (TextView) findViewById(R.id.tv_deadline);
@@ -41,6 +43,21 @@ public class ViewMemoDetails extends AppCompatActivity {
         item.setId(extras.getInt("id"));*/
         itemId = extras.getInt("itemId");
         setUI(itemId);
+
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        btn_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                db.deleteMemo(db.getMemo(itemId));
+                finish();
+            }
+        });
 
         btn_edit.setOnClickListener(new View.OnClickListener() {
             @Override
