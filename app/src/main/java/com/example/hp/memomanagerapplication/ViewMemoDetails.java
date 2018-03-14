@@ -22,7 +22,7 @@ public class ViewMemoDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_memo_details);
         Button btn_edit = (Button) findViewById(R.id.btn_editItem);
-        Button btn_cancel = (Button) findViewById(R.id.btn_Cancel);
+        Button btn_cancel = (Button) findViewById(R.id.btn_back);
         Button btn_delete = (Button) findViewById(R.id.btn_delete);
         title = (TextView) findViewById(R.id.tv_title);
         category = (TextView) findViewById(R.id.tv_category);
@@ -50,6 +50,8 @@ public class ViewMemoDetails extends AppCompatActivity {
                 finish();
             }
         });
+
+
 
         btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
