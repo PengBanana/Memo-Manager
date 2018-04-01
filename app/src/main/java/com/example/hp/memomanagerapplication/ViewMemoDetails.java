@@ -12,8 +12,6 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class ViewMemoDetails extends AppCompatActivity {
-    public static final int EDITITEM_CODE=2;
-    public static final int DELETEITEM_CODE=3;
     public int itemId;
     public TextView title,category,deadline,priorityLevel,notificationIntervals,notificationTime,status,note;
     public MySQLiteHelper db = new MySQLiteHelper(this);
@@ -74,9 +72,9 @@ public class ViewMemoDetails extends AppCompatActivity {
                 editItemIntent.putExtra(Memo.NOTIFICATIONTIME_CODE, notificationTime.getText().toString());
                 editItemIntent.putExtra(Memo.STATUS_CODE, status.getText().toString());
                 editItemIntent.putExtra(Memo.NOTE_CODE, note.getText().toString());
-                editItemIntent.putExtra("action", EDITITEM_CODE);
+                editItemIntent.putExtra("action", MemoSort.EDITITEM_CODE);
                 editItemIntent.putExtra(Memo.ID_CODE, itemId);
-                ViewMemoDetails.this.startActivityForResult(editItemIntent, EDITITEM_CODE);
+                ViewMemoDetails.this.startActivityForResult(editItemIntent, MemoSort.EDITITEM_CODE);
             }
         });
 
@@ -85,18 +83,21 @@ public class ViewMemoDetails extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
-            case EDITITEM_CODE:
-                Memo newItem = new Memo(
-                        data.getStringExtra(Memo.TITLE_CODE), data.getStringExtra(Memo.CATEGORY_CODE),
-                        data.getStringExtra(Memo.DEADLINE_CODE),data.getStringExtra(Memo.PRIORITYLEVEL_CODE),
-                        data.getStringExtra(Memo.NOTIFICATIONINTERVALS_CODE), data.getStringExtra(Memo.NOTIFICATIONTIME_CODE),
-                        data.getStringExtra(Memo.STATUS_CODE), data.getStringExtra(Memo.NOTE_CODE));
-                newItem.setId(itemId);
-                db.updateMemo(newItem);
-                setUI(itemId);
-                break;
+        if(resultCode==RESULT_OK){
+            switch (requestCode){
+                case MemoSort.EDITITEM_CODE:
+                    Memo newItem = new Memo(
+                            data.getStringExtra(Memo.TITLE_CODE), data.getStringExtra(Memo.CATEGORY_CODE),
+                            data.getStringExtra(Memo.DEADLINE_CODE),data.getStringExtra(Memo.PRIORITYLEVEL_CODE),
+                            data.getStringExtra(Memo.NOTIFICATIONINTERVALS_CODE), data.getStringExtra(Memo.NOTIFICATIONTIME_CODE),
+                            data.getStringExtra(Memo.STATUS_CODE), data.getStringExtra(Memo.NOTE_CODE));
+                    newItem.setId(itemId);
+                    db.updateMemo(newItem);
+                    setUI(itemId);
+                    break;
+            }
         }
+
 
     }
 

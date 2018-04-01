@@ -1,14 +1,12 @@
 <resources>
-    <string name="app_name">Memo Manager Application</string>
+    <string name="app_name">My Project Manager</string>
     <string name="action_settings">Settings</string>
     <string-array name="intervals">
-        <item></item>
         <item>Once</item>
         <item>Daily</item>
         <item>Weekly</item>
     </string-array>
     <string-array name="status">
-        <item></item>
         <item>ACTIVE</item>
         <item>COMPLETE</item>
         <item>OVERDUE</item>
@@ -20,5 +18,9 @@
         <item>Personal</item>
         <item>Others</item>
     </string-array>
+    <string name="title_activity_memo_sort">MemoSort</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
 </resources>

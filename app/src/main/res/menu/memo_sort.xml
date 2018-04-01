@@ -1,7 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.hp.memomanagerapplication.ViewMemoActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_sortbyTitle"
+        android:orderInCategory="100"
+        android:title="sort by Title" />
     <item
         android:id="@+id/action_sortbyDate"
         android:orderInCategory="102"
@@ -10,10 +13,6 @@
         android:id="@+id/action_sortbyPriority"
         android:orderInCategory="103"
         android:title="sort by Priority" />
-    <item
-        android:id="@+id/action_sortbyName"
-        android:orderInCategory="100"
-        android:title="sort by Name" />
     <item
         android:id="@+id/action_sortbyStatus"
         android:orderInCategory="104"

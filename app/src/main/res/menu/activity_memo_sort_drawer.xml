@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_all"
+            android:title="All" />
+        <item
+            android:id="@+id/nav_onprogress"
+            android:title="Ongoing" />
+        <item
+            android:id="@+id/nav_active"
+            android:title="Active" />
+        <item
+            android:id="@+id/nav_overdue"
+            android:title="Overdue" />
+        <item
+            android:id="@+id/nav_complete"
+            android:title="Complete" />
+    </group>
+
+</menu>

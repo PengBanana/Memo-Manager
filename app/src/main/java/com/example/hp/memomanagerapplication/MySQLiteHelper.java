@@ -165,6 +165,45 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // return books
         return memoList;
     }
+    public ArrayList<Memo> getMemoWhere(String where) {
+        ArrayList<Memo> memoList = new ArrayList<>();
+
+        if(where.equalsIgnoreCase("Onprogress")){
+            where="'ACTIVE' OR "+ Memo.STATUS_CODE + " = 'OVERDUE' OR " + Memo.STATUS_CODE +" IS NULL";
+        }
+        // 1. build the query
+        String query = "SELECT * FROM " + TABLE_MEMO + " WHERE "+ Memo.STATUS_CODE + " = " + where;
+
+        // 2. get reference to writable DB
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        // 3. go over each row, build book and add it to list
+        Memo item = null;
+        if (cursor.moveToFirst()) {
+            do {
+                item = new Memo();
+                item.setId(Integer.parseInt(cursor.getString(0)));
+                item.setTitle(cursor.getString(1));
+                item.setCategory(cursor.getString(2));
+                item.setDeadline(cursor.getString(3));
+                item.setNote(cursor.getString(4));
+                item.setNotificationIntervals(cursor.getString(5));
+                item.setNotificationTime(cursor.getString(6));
+                item.setPriorityLevel(cursor.getString(7));
+                item.setStatus(cursor.getString(8));
+
+                // Add book to books
+                memoList.add(item);
+            } while (cursor.moveToNext());
+        }
+
+        Log.d("getAllBooks()", memoList.toString());
+
+        // return books
+        return memoList;
+    }
+
     public int updateMemo(Memo item) {
 
         // 1. get reference to writable DB
@@ -209,5 +248,96 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         //log
         Log.d("deleteBook", item.toString());
+    }
+
+    public void useTemporaryTable(){
+        //bullshit
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS TemporaryMemos");
+        // SQL statement to create book table
+        String CREATE_MEMO_TABLE = "CREATE TABLE TemporaryMemos ( " +
+                Memo.ID_CODE+" INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                Memo.TITLE_CODE +" TEXT, "+
+                Memo.CATEGORY_CODE+" TEXT, "+
+                Memo.DEADLINE_CODE+" TEXT, "+
+                Memo.NOTE_CODE+" TEXT, "+
+                Memo.NOTIFICATIONINTERVALS_CODE+" TEXT, "+
+                Memo.NOTIFICATIONTIME_CODE+" TEXT, "+
+                Memo.PRIORITYLEVEL_CODE+" TEXT, "+
+                Memo.STATUS_CODE+" TEXT"+")";
+        Log.d("Create Database Code:", "TemporaryMemos used");
+        // create books table
+        db.execSQL(CREATE_MEMO_TABLE);
+    }
+    public void addTempMemo(Memo item){
+        // 1. get reference to writable DB
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // 2. create ContentValues to add key "column"/value
+        ContentValues values = new ContentValues();
+        values.put(Memo.TITLE_CODE, item.getTitle()); // get title
+        values.put(Memo.DEADLINE_CODE, item.getDeadline()); // get title
+        values.put(Memo.NOTE_CODE, item.getNote()); // get title
+        values.put(Memo.NOTIFICATIONINTERVALS_CODE, item.getNotificationIntervals()); // get title
+        values.put(Memo.NOTIFICATIONTIME_CODE, item.getNotificationTime()); // get title
+        values.put(Memo.PRIORITYLEVEL_CODE, item.getPriorityLevel()); // get title
+        values.put(Memo.CATEGORY_CODE, item.getCategory()); // get title
+        values.put(Memo.STATUS_CODE, item.getStatus()); // get title
+        //
+        // 3. insert
+        db.insert("TemporaryMemos", // table
+                null, //nullColumnHack
+                values); // key/value -> keys = column names/ values = column values
+
+        // 4. close
+        db.close();
+    }
+    public ArrayList<Memo> getTempMemoBy(String Code){
+        ArrayList<Memo> memoList=new ArrayList<>();
+        // 1. build the query
+        String query = "SELECT  * FROM " + "TemporaryMemos";
+        if(Code.equals(Memo.STATUS_CODE)){
+            query = "SELECT  * FROM " + "TemporaryMemos" + " ORDER BY " + Memo.STATUS_CODE;
+        }
+        else if(Code.equals(Memo.PRIORITYLEVEL_CODE)){
+            query = "SELECT  * FROM " + "TemporaryMemos" + " ORDER BY " + Memo.PRIORITYLEVEL_CODE;
+        }
+        else if(Code.equals(Memo.DEADLINE_CODE)){
+            query = "SELECT  * FROM " + "TemporaryMemos" + " ORDER BY " + Memo.DEADLINE_CODE;
+        }
+        else if(Code.equals(Memo.TITLE_CODE)){
+            query = "SELECT  * FROM " + "TemporaryMemos" + " ORDER BY " + Memo.TITLE_CODE;
+        }
+
+
+        // 2. get reference to writable DB
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        // 3. go over each row, build book and add it to list
+        Memo item = null;
+        if (cursor.moveToFirst()) {
+            do {
+                item = new Memo();
+                item.setId(Integer.parseInt(cursor.getString(0)));
+                item.setTitle(cursor.getString(1));
+                item.setCategory(cursor.getString(2));
+                item.setDeadline(cursor.getString(3));
+                item.setNote(cursor.getString(4));
+                item.setNotificationIntervals(cursor.getString(5));
+                item.setNotificationTime(cursor.getString(6));
+                item.setPriorityLevel(cursor.getString(7));
+                item.setStatus(cursor.getString(8));
+
+                // Add book to books
+                memoList.add(item);
+            } while (cursor.moveToNext());
+        }
+
+        Log.d("getAllTemporaryBooks()", memoList.toString());
+
+        // return books
+
+        return memoList;
     }
 }

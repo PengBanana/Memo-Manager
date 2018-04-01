@@ -91,6 +91,47 @@ public class newMemoActivity extends AppCompatActivity {
                 et_priority.setText(itemEdited.getPriorityLevel());
                 et_time.setText(itemEdited.getNotificationTime());
                 et_note.setText(itemEdited.getNote());
+                String statusText=itemEdited.getStatus();
+                int statusNum=0;
+                if(statusText.equalsIgnoreCase("active")){
+                    statusNum=0;
+                }
+                else if(statusText.equalsIgnoreCase("complete")){
+                    statusNum=1;
+                }
+                else if(statusText.equalsIgnoreCase("overdue")){
+                    statusNum=2;
+                }
+                et_status.setDropDownVerticalOffset(statusNum);
+
+                String intervalsText=itemEdited.getNotificationIntervals();
+                int intervalsNum=0;
+                if(intervalsText.equalsIgnoreCase("once")){
+                    intervalsNum=0;
+                }
+                else if(intervalsText.equalsIgnoreCase("daily")){
+                    intervalsNum=1;
+                }
+                else if(intervalsText.equalsIgnoreCase("weekly")){
+                    intervalsNum=2;
+                }
+                et_intervals.setDropDownVerticalOffset(intervalsNum);
+
+                String categoryText=itemEdited.getCategory();
+                int num=0;
+                if(categoryText.equalsIgnoreCase("academic")){
+                    num=1;
+                }
+                else if(categoryText.equalsIgnoreCase("work")){
+                    num=2;
+                }
+                else if(categoryText.equalsIgnoreCase("personal")){
+                    num=3;
+                }
+                else if(categoryText.equalsIgnoreCase("others")){
+                    num=4;
+                }
+                et_category.setDropDownVerticalOffset(num);
             }
         }
         
