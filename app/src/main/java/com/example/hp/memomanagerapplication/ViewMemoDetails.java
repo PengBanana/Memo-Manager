@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 public class ViewMemoDetails extends AppCompatActivity {
     public static final int EDITITEM_CODE=2;
+    public static final int DELETEITEM_CODE=3;
     public int itemId;
     public TextView title,category,deadline,priorityLevel,notificationIntervals,notificationTime,status,note;
     public MySQLiteHelper db = new MySQLiteHelper(this);

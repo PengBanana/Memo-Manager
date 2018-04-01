@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
     tools:context="com.example.hp.memomanagerapplication.ViewMemoActivity">
 
     <LinearLayout
@@ -19,7 +18,6 @@
             <android.support.design.widget.AppBarLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorAccentLight"
                 android:theme="@style/AppTheme.AppBarOverlay"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -30,7 +28,6 @@
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:background="@color/colorAccentLight"
                     app:popupTheme="@style/AppTheme.PopupOverlay" />
 
             </android.support.design.widget.AppBarLayout>
@@ -40,7 +37,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="bottom"
-            android:background="@color/colorPrimary"
             app:layout_anchorGravity="bottom|end"
             tools:layout_editor_absoluteY="65dp">
 
@@ -74,8 +70,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        android:adjustViewBounds="false"
         app:backgroundTint="@color/colorPrimaryDark"
         app:fabSize="normal"
-        app:srcCompat="@mipmap/watermelonadd_icon_round" />
+        app:srcCompat="@drawable/my_inputadd" />
 
 </android.support.design.widget.CoordinatorLayout>

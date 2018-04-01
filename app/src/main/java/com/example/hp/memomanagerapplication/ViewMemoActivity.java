@@ -214,14 +214,17 @@ public class ViewMemoActivity extends AppCompatActivity {
                             data.getStringExtra(Memo.STATUS_CODE), data.getStringExtra(Memo.NOTE_CODE));
                     db.addMemo(newItem);
                     Log.d("memoListbeforeAdd:", memoList.size()+"");
-                    memoList.clear();
-                    memoList.addAll(db.getAllMemos());
-
-                    Log.d("memoListuponAdd:", memoList.size()+"");
-                    recyclerView.getAdapter().notifyDataSetChanged();
+                    updateMemoList();
                     break;
             }
         }
+    }
+
+    public void updateMemoList(){
+        memoList.clear();
+        memoList.addAll(db.getAllMemos());
+        Log.d("memoListuponAdd:", memoList.size()+"");
+        recyclerView.getAdapter().notifyDataSetChanged();
     }
 
     @Override
@@ -239,14 +242,22 @@ public class ViewMemoActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
+        /*if (id == R.id.action_refresh) {
+            updateMemoList();
+            return true;
+        }*/
         if (id == R.id.action_refresh) {
-            memoList.clear();
-            memoList.addAll(db.getAllMemos());
-            recyclerView.getAdapter().notifyDataSetChanged();
+            updateMemoList();
             return true;
         }
 
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateMemoList();
     }
 }

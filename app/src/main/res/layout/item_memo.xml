@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cl_item"
     android:layout_width="match_parent"
@@ -10,22 +11,27 @@
         android:id="@+id/llv_itemOrganizer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorBackground"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:id="@+id/llh_itemHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorBackground"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp">
 
             <TextView
                 android:id="@+id/tv_itemTitle"
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@color/colorBackground"
                 android:text="Memo Title"
                 android:textAlignment="viewStart"
                 android:textColor="@android:color/black"
@@ -47,15 +53,15 @@
             android:id="@+id/llh_itemDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorBackground"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp">
 
             <TextView
                 android:id="@+id/tv_itemPreview"
                 android:layout_width="230dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@color/colorBackground"
                 android:text="This sample text will be used to check what it looks like while editing"
                 android:textAlignment="viewStart"
                 android:textColor="@android:color/black"
@@ -68,7 +74,6 @@
                 android:layout_weight="1"
                 android:text="Active"
                 android:textAlignment="textEnd"
-                android:textColor="@color/colorAccentLight"
                 android:textSize="16sp"
                 android:textStyle="italic" />
 
