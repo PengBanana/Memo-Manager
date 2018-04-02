@@ -102,7 +102,7 @@ public class newMemoActivity extends AppCompatActivity {
                 else if(statusText.equalsIgnoreCase("overdue")){
                     statusNum=2;
                 }
-                et_status.setDropDownVerticalOffset(statusNum);
+                et_status.setSelection(statusNum);
 
                 String intervalsText=itemEdited.getNotificationIntervals();
                 int intervalsNum=0;
@@ -115,7 +115,7 @@ public class newMemoActivity extends AppCompatActivity {
                 else if(intervalsText.equalsIgnoreCase("weekly")){
                     intervalsNum=2;
                 }
-                et_intervals.setDropDownVerticalOffset(intervalsNum);
+                et_intervals.setSelection(intervalsNum);
 
                 String categoryText=itemEdited.getCategory();
                 int num=0;
@@ -131,7 +131,7 @@ public class newMemoActivity extends AppCompatActivity {
                 else if(categoryText.equalsIgnoreCase("others")){
                     num=4;
                 }
-                et_category.setDropDownVerticalOffset(num);
+                et_category.setSelection(num);
             }
         }
         
