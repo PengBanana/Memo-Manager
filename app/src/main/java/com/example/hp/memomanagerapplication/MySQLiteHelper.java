@@ -8,9 +8,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.security.Key;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by hp on 13/03/2018.
@@ -24,6 +26,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "MemoDB";
     private static final String TABLE_MEMO = "memos";
     private static final String KEY_ID = "id";
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
     private static final String[] COLUMNS = {
             Memo.ID_CODE,
             Memo.TITLE_CODE,
@@ -168,12 +171,24 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public ArrayList<Memo> getMemoWhere(String where) {
         ArrayList<Memo> memoList = new ArrayList<>();
 
-        if(where.equalsIgnoreCase("Onprogress")){
-            where="'ACTIVE' OR "+ Memo.STATUS_CODE + " = 'OVERDUE' OR " + Memo.STATUS_CODE +" IS NULL";
+        if(where.equalsIgnoreCase("OG")){
+            where=" WHERE "+ Memo.STATUS_CODE +" = 'ACTIVE' OR "+ Memo.STATUS_CODE + " = 'OVERDUE' OR " + Memo.STATUS_CODE +" IS NULL ORDER BY "+ Memo.DEADLINE_CODE+" ASC";
+        }
+        else if(where.equalsIgnoreCase("OVERDUE")){
+            where=" WHERE "+ Memo.STATUS_CODE +" = 'OVERDUE' ORDER BY "+ Memo.DEADLINE_CODE+" ASC";
+        }
+        else if(where.equalsIgnoreCase("ACTIVE")){
+            where=" WHERE "+ Memo.STATUS_CODE +" = 'ACTIVE' ORDER BY "+ Memo.DEADLINE_CODE+" ASC";
+        }
+        else if(where.equalsIgnoreCase("Complete")){
+            where=" WHERE "+ Memo.STATUS_CODE +" = 'COMPLETE' ORDER BY "+ Memo.DEADLINE_CODE+" ASC";
+        }
+        else if(where.equalsIgnoreCase("All")){
+            where=" ORDER BY "+ Memo.DEADLINE_CODE+" ASC";
         }
         // 1. build the query
-        String query = "SELECT * FROM " + TABLE_MEMO + " WHERE "+ Memo.STATUS_CODE + " = " + where;
-
+        String query = "SELECT * FROM " + TABLE_MEMO + where;
+        Log.d("getMemoWhere",query);
         // 2. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
@@ -197,8 +212,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 memoList.add(item);
             } while (cursor.moveToNext());
         }
-
-        Log.d("getAllBooks()", memoList.toString());
+        Log.d("getMemoWhere", memoList.size()+"");
 
         // return books
         return memoList;
@@ -293,6 +307,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close();
     }
     public ArrayList<Memo> getTempMemoBy(String Code){
+        Log.d("getTempMemoBy =>", Code);
         ArrayList<Memo> memoList=new ArrayList<>();
         // 1. build the query
         String query = "SELECT  * FROM " + "TemporaryMemos";
@@ -300,10 +315,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             query = "SELECT  * FROM " + "TemporaryMemos" + " ORDER BY " + Memo.STATUS_CODE;
         }
         else if(Code.equals(Memo.PRIORITYLEVEL_CODE)){
-            query = "SELECT  * FROM " + "TemporaryMemos" + " ORDER BY " + Memo.PRIORITYLEVEL_CODE;
+            query = "SELECT  * FROM " + "TemporaryMemos" + " ORDER BY " + Memo.PRIORITYLEVEL_CODE+" DESC";
         }
         else if(Code.equals(Memo.DEADLINE_CODE)){
-            query = "SELECT  * FROM " + "TemporaryMemos" + " ORDER BY " + Memo.DEADLINE_CODE;
+            query = "SELECT  * FROM " + "TemporaryMemos" + " ORDER BY " + Memo.DEADLINE_CODE +" DESC";
         }
         else if(Code.equals(Memo.TITLE_CODE)){
             query = "SELECT  * FROM " + "TemporaryMemos" + " ORDER BY " + Memo.TITLE_CODE;
@@ -340,4 +355,18 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         return memoList;
     }
+    public void updateData(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        long currentdate = System.currentTimeMillis();
+        String dateString = sdf.format(currentdate);
+        //UPDATE `acadsosd`.`studentathleteprofile` SET `studentDateOfBirth`='1996-10-18' WHERE `studentIDNumber`='11327219';
+        String[] args={};
+
+        ContentValues values = new ContentValues();
+        values.put(Memo.STATUS_CODE, "OVERDUE"); // get title
+        db.update(TABLE_MEMO, values, Memo.DEADLINE_CODE +" > "+dateString+" AND " + Memo.STATUS_CODE + " IS NOT 'OVERDUE' AND " + Memo.STATUS_CODE +" IS NOT 'COMPLETE'", args);
+        db.close();
+        Log.d("Database","Updated "+dateString);
+    }
+
 }

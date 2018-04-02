@@ -1,9 +1,17 @@
 package com.example.hp.memomanagerapplication;
 
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class MemoSort extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -35,17 +44,42 @@ public class MemoSort extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memo_sort);
-        memoList = db.getAllMemos();
+        mainActivityMethod();
+    }
+
+    public void mainActivityMethod(){
+        dbManipulation();
+        recyclerAndAdapter();
+        //getMemoList("Onprogress");
+        recyclerView.getAdapter().notifyDataSetChanged();
+        toolbarAndFloatingActionButton();
+        alarmReciever();
+}
+
+    private void dbManipulation() {
         db.onUpgrade(db.getReadableDatabase(),1,2);
         Log.d("memoList", memoList.toString());
         insertSampleData();
-        //RecyclerView and Adapter Call
-        recyclerView = (RecyclerView) findViewById(R.id.rv_itemList);
-        mAdapter = new MemoAdapter(memoList);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(mAdapter);
+        db.updateData();
+        memoList.clear();
+        memoList.addAll(db.getMemoWhere("OG"));
+        Log.d("memoList",memoList.size()+"");
+        //getMemoList("Onprogress");
+    }
+
+    private void alarmReciever() {
+        Log.d("alarmRecievermain", "ran");
+        AlarmManager alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlarmReciever.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+        Calendar time = Calendar.getInstance();
+        time.setTimeInMillis(System.currentTimeMillis());
+        time.add(Calendar.SECOND, 5);
+        alarmMgr.set(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(), pendingIntent);
+
+    }
+
+    private void toolbarAndFloatingActionButton() {
 
         //Toolbar and FAB
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -72,6 +106,15 @@ public class MemoSort extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+    private void recyclerAndAdapter() {
+        recyclerView = (RecyclerView) findViewById(R.id.rv_itemList);
+        mAdapter = new MemoAdapter(memoList);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(mAdapter);
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -94,21 +137,21 @@ public class MemoSort extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
+        String where="All";
         if (id == R.id.nav_active) {
             // Handle the camera action
-            getMemoList("'ACTIVE'");
+            where="ACTIVE";
         } else if (id == R.id.nav_complete) {
-            getMemoList("'COMPLETE'");
+            where="COMPLETE";
         } else if (id == R.id.nav_onprogress) {
-            getMemoList("Onprogress");
+            where="OG";
         } else if (id == R.id.nav_overdue) {
-            getMemoList("'OVERDUE'");
+            where="OVERDUE";
         }
         else if (id == R.id.nav_all) {
             getMemoListAll();
         }
-
+        getMemoList(where);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -117,7 +160,8 @@ public class MemoSort extends AppCompatActivity
     private void getMemoList(String where) {
         memoList.clear();
         memoList.addAll(db.getMemoWhere(where));
-        Log.d("memoListuponAdd:", memoList.size()+"");
+        Log.d("getMemoList by "+where+":", memoList.size()+"");
+        orderBy(Memo.DEADLINE_CODE);
         recyclerView.getAdapter().notifyDataSetChanged();
     }
 
@@ -140,13 +184,14 @@ public class MemoSort extends AppCompatActivity
                             data.getStringExtra(Memo.STATUS_CODE), data.getStringExtra(Memo.NOTE_CODE));
                     db.addMemo(newItem);
                     Log.d("memoListbeforeAdd:", memoList.size()+"");
-                    getMemoList("ONPROGRESS");
+                    getMemoList("OG");
                     break;
             }
         }
     }
 
     public void getMemoListAll(){
+        db.updateData();
         memoList.clear();
         memoList.addAll(db.getAllMemos());
         Log.d("memoListuponAdd:", memoList.size()+"");
@@ -182,11 +227,12 @@ public class MemoSort extends AppCompatActivity
             return true;
         }
 
-
+        recyclerView.getAdapter().notifyDataSetChanged();
         return super.onOptionsItemSelected(item);
     }
 
     private void orderBy(String Code) {
+        Log.d("orderBy:", Code);
             db.useTemporaryTable();
             for(int i=0; i<memoList.size(); i++){
                 db.addTempMemo(memoList.get(i));
@@ -205,6 +251,7 @@ public class MemoSort extends AppCompatActivity
 
 
     private void insertSampleData() {
+        Log.d("insertSampleData", "default");
         //String title, String category, String deadline, String priorityLevel, String notificationIntervals, String notificationTime, String status
         Memo sampleMemo = new
                 Memo("WIR-TEC Beta Demo",
@@ -328,9 +375,5 @@ public class MemoSort extends AppCompatActivity
                 "OVERDUE",
                 "Remind External EVP and Corporel VP");
         db.addMemo(sampleMemo);
-    }
-
-    private void checkData(){
-
     }
 }

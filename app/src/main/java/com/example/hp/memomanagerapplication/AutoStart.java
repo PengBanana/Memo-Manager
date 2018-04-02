@@ -10,13 +10,13 @@ import android.content.Intent;
 
 public class AutoStart extends BroadcastReceiver
 {
-    AlarmReciever alarm = new AlarmReciever();
+    //AlarmReciever alarm = new AlarmReciever();
     @Override
     public void onReceive(Context context, Intent intent)
     {
         if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED))
         {
-            alarm.setAlarm(context);
+            //alarm.setAlarm(context);
         }
     }
 }

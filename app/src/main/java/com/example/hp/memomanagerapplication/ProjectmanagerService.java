@@ -6,7 +6,7 @@ import android.os.IBinder;
 
 public class ProjectmanagerService extends Service
 {
-    AlarmReciever alarm = new AlarmReciever();
+    //AlarmReciever alarm = new AlarmReciever();
     public void onCreate()
     {
         super.onCreate();
@@ -15,14 +15,13 @@ public class ProjectmanagerService extends Service
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
-        alarm.setAlarm(this);
+        //alarm.setAlarm(this);
         return START_STICKY;
     }
 
     @Override
     public void onStart(Intent intent, int startId)
-    {
-        alarm.setAlarm(this);
+    {//alarm.setAlarm(this);
     }
 
     @Override

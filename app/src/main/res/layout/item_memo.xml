@@ -35,7 +35,8 @@
                 android:text="Memo Title"
                 android:textAlignment="viewStart"
                 android:textColor="@android:color/black"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_itemDate"
@@ -64,8 +65,9 @@
                 android:layout_weight="1"
                 android:text="This sample text will be used to check what it looks like while editing"
                 android:textAlignment="viewStart"
-                android:textColor="@android:color/black"
-                android:textSize="16sp" />
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="12sp"
+                android:textStyle="italic" />
 
             <TextView
                 android:id="@+id/tv_itemStatus"
@@ -75,7 +77,7 @@
                 android:text="COMPLETE"
                 android:textAlignment="textEnd"
                 android:textSize="16sp"
-                android:textStyle="italic" />
+                android:textStyle="bold|italic" />
 
         </LinearLayout>
 

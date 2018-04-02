@@ -1,12 +1,20 @@
 package com.example.hp.memomanagerapplication;
 
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.PowerManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+import android.util.Log;
 import android.widget.Toast;
+
+import java.util.Calendar;
 
 /**
  * Created by hp on 02/04/2018.
@@ -16,26 +24,23 @@ public class AlarmReciever extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "");
-        wl.acquire();
-
-        // Put here YOUR code.
-        Toast.makeText(context, "Alarm !!!!!!!!!!", Toast.LENGTH_LONG).show(); // For example
-        wl.release();
+        Log.d("AlarmReciever:", "onRecieve");
+        Toast.makeText(context, "Alarm went off", Toast.LENGTH_SHORT).show();
+        /*
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Service.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder mBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(context)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle("Project Manager")
+                .setContentText("WAZZUP")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        notificationManager.notify(0, mBuilder.build());
+        */
+        //TODO: SEND NOTIFICATION
     }
 
-    public void setAlarm(Context context){
-        AlarmManager am =( AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        Intent i = new Intent(context, AlarmReciever.class);
-        PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
-        am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000 * 60 * 10, pi); // Millisec * Second * Minute
+    private void sendNotification() {
+
+
     }
 
-    public void cancelAlarm(Context context){
-        Intent intent = new Intent(context, AlarmReciever.class);
-        PendingIntent sender = PendingIntent.getBroadcast(context, 0, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.cancel(sender);
-    }
 }
