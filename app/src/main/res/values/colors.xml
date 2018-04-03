@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#157241</color>
     <color name="colorAccent">#ad3838</color>
     <color name="colorAccentLight">#00008b</color>
+    <color name="colorAccentSecondary">#b6ddcb</color>
 </resources>
 <!--
 #ad3838 dark pink

@@ -26,15 +26,15 @@ public class AlarmReciever extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d("AlarmReciever:", "onRecieve");
         Toast.makeText(context, "Alarm went off", Toast.LENGTH_SHORT).show();
-        /*
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Service.NOTIFICATION_SERVICE);
-        NotificationCompat.Builder mBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(context)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+        NotificationCompat.Builder mBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(context
+        )
+                .setSmallIcon(R.mipmap.memo_manager_icon)
                 .setContentTitle("Project Manager")
                 .setContentText("WAZZUP")
+                .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         notificationManager.notify(0, mBuilder.build());
-        */
         //TODO: SEND NOTIFICATION
     }
 

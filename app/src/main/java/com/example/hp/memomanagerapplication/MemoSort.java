@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -26,8 +27,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class MemoSort extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -51,15 +59,17 @@ public class MemoSort extends AppCompatActivity
         dbManipulation();
         recyclerAndAdapter();
         //getMemoList("Onprogress");
-        recyclerView.getAdapter().notifyDataSetChanged();
         toolbarAndFloatingActionButton();
+        //notificationSetter();
         alarmReciever();
+        //getMemoList("OG");
+        //recyclerView.getAdapter().notifyDataSetChanged();
 }
 
     private void dbManipulation() {
-        db.onUpgrade(db.getReadableDatabase(),1,2);
+        //db.onUpgrade(db.getReadableDatabase(),1,2);
         Log.d("memoList", memoList.toString());
-        insertSampleData();
+        //insertSampleData();
         db.updateData();
         memoList.clear();
         memoList.addAll(db.getMemoWhere("OG"));
@@ -74,9 +84,41 @@ public class MemoSort extends AppCompatActivity
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
         Calendar time = Calendar.getInstance();
         time.setTimeInMillis(System.currentTimeMillis());
-        time.add(Calendar.SECOND, 5);
+        time.add(Calendar.MINUTE, 1);
         alarmMgr.set(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(), pendingIntent);
 
+    }
+
+    private void setAlarm(String alarmDate, String alarmTime, String alarmIntervals){
+        //TODO: if null checking
+        String[] dateSplitter=alarmDate.split("/");
+        String[] timeSplitter=alarmTime.split(":");
+        AlarmManager alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlarmReciever.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+        Calendar alarmSetTime = Calendar.getInstance();
+        if(alarmDate.isEmpty()){
+            alarmSetTime.setTimeInMillis(System.currentTimeMillis());
+            alarmSetTime.add(Calendar.MINUTE, 1);
+            Log.d("AlarmSetTo2:", alarmTime+"");
+        }
+        else{
+            int alarmHour=Integer.parseInt(timeSplitter[0]);
+            int alarmMinute=Integer.parseInt(timeSplitter[1]);
+            int alarmSecond=0;
+            int alarmMonth=Integer.parseInt(dateSplitter[0]);
+            int alarmDay=Integer.parseInt(dateSplitter[1]);
+            int alarmYear=Integer.parseInt(dateSplitter[2]);
+            alarmSetTime.set(Calendar.DAY_OF_MONTH, alarmDay);
+            alarmSetTime.set(Calendar.MONTH, alarmMonth);
+            alarmSetTime.set(Calendar.YEAR, alarmYear);
+            alarmSetTime.set(Calendar.HOUR_OF_DAY, alarmHour);
+            alarmSetTime.set(Calendar.MINUTE, alarmMinute);
+            alarmSetTime.set(Calendar.SECOND, alarmSecond);
+            Log.d("AlarmSetTo:", alarmMonth+"/"+alarmDay+"/"+alarmYear+" "+alarmHour+":"+alarmMinute);
+
+        }
+        alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmSetTime.getTimeInMillis(), pendingIntent);
     }
 
     private void toolbarAndFloatingActionButton() {
@@ -161,7 +203,7 @@ public class MemoSort extends AppCompatActivity
         memoList.clear();
         memoList.addAll(db.getMemoWhere(where));
         Log.d("getMemoList by "+where+":", memoList.size()+"");
-        orderBy(Memo.DEADLINE_CODE);
+        //orderBy(Memo.DEADLINE_CODE);
         recyclerView.getAdapter().notifyDataSetChanged();
     }
 
@@ -177,14 +219,20 @@ public class MemoSort extends AppCompatActivity
                 String priorityLevel, String notificationIntervals,
                 String notificationTime, String status, String note
                      */
+                    String deadline=data.getStringExtra(Memo.DEADLINE_CODE);
+                    String time=data.getStringExtra(Memo.NOTIFICATIONTIME_CODE);
+                    String notificationIntervals=data.getStringExtra(Memo.NOTIFICATIONINTERVALS_CODE);
                     Memo newItem = new Memo(
                             data.getStringExtra(Memo.TITLE_CODE), data.getStringExtra(Memo.CATEGORY_CODE),
-                            data.getStringExtra(Memo.DEADLINE_CODE),data.getStringExtra(Memo.PRIORITYLEVEL_CODE),
-                            data.getStringExtra(Memo.NOTIFICATIONINTERVALS_CODE), data.getStringExtra(Memo.NOTIFICATIONTIME_CODE),
+                            deadline ,data.getStringExtra(Memo.PRIORITYLEVEL_CODE),
+                            notificationIntervals, time,
                             data.getStringExtra(Memo.STATUS_CODE), data.getStringExtra(Memo.NOTE_CODE));
                     db.addMemo(newItem);
-                    Log.d("memoListbeforeAdd:", memoList.size()+"");
+                    //get time of notification
+                    setAlarm(deadline, time, notificationIntervals);
                     getMemoList("OG");
+                    Log.d("memoListCount:", memoList.size()+"");
+
                     break;
             }
         }
