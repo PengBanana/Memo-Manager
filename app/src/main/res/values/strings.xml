@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Project Manager</string>
+    <string name="app_name">Project Manager</string>
     <string name="action_settings">Settings</string>
     <string-array name="intervals">
         <item>Once</item>

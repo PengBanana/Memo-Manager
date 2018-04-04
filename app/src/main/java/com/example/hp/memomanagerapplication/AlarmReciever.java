@@ -24,22 +24,25 @@ public class AlarmReciever extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        MySQLiteHelper db = new MySQLiteHelper(context);
+        //int ongoingCount=db.getOngoingCount();
+        int overdueCount=db.getOverdueCount();
+        int activeCount=db.getActiveCount();
+        //int ongoingCount=0;
         Log.d("AlarmReciever:", "onRecieve");
-        Toast.makeText(context, "Alarm went off", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "Alarm went off", Toast.LENGTH_SHORT).show();
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Service.NOTIFICATION_SERVICE);
         NotificationCompat.Builder mBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(context
         )
                 .setSmallIcon(R.mipmap.memo_manager_icon)
                 .setContentTitle("Project Manager")
-                .setContentText("WAZZUP")
+                .setContentText("You have "+overdueCount+" overdue and "+activeCount+" active projects")
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         notificationManager.notify(0, mBuilder.build());
-        //TODO: SEND NOTIFICATION
     }
 
-    private void sendNotification() {
-
+    private void resetAlarm() {
 
     }
 

@@ -30,6 +30,53 @@ public class newMemoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_memo);
+        setnewMemoUI();
+        setActionListers();
+    }
+
+    private void setActionListers() {
+
+        Button btn_submit = (Button) findViewById(R.id.btn_Submit);
+        Button btn_cancel = (Button) findViewById(R.id.btn_Cancel);
+
+        btn_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent returnIntent = new Intent();
+                String title=et_title.getText().toString();
+                String category=et_category.getSelectedItem().toString();
+                String deadline=et_date.getText().toString();
+                String priorityLevel=et_priority.getText().toString();
+                String notificationIntervals=et_intervals.getSelectedItem().toString();
+                String notificationTime=et_time.getText().toString();
+                String status=et_status.getSelectedItem().toString();
+                String note=et_note.getText().toString();
+                //Memo newItem = new Memo(title , category,deadline, priorityLevel, notificationIntervals, notificationTime, status, note);
+                //MySQLiteHelper db = new MySQLiteHelper(view.getContext());
+                //db.addMemo(newItem);
+                returnIntent.putExtra(Memo.TITLE_CODE, title);
+                returnIntent.putExtra(Memo.CATEGORY_CODE, category);
+                returnIntent.putExtra(Memo.DEADLINE_CODE, deadline);
+                returnIntent.putExtra(Memo.PRIORITYLEVEL_CODE, priorityLevel);
+                returnIntent.putExtra(Memo.NOTIFICATIONINTERVALS_CODE, notificationIntervals);
+                returnIntent.putExtra(Memo.NOTIFICATIONTIME_CODE, notificationTime);
+                returnIntent.putExtra(Memo.STATUS_CODE, status);
+                returnIntent.putExtra(Memo.NOTE_CODE, note);
+                setResult(RESULT_OK, returnIntent);
+                finish();
+            }
+        });
+
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setResult(RESULT_CANCELED);
+                finish();
+            }
+        });
+    }
+
+    private void setnewMemoUI() {
         et_title = (EditText) findViewById(R.id.pt_Title);
         et_priority = (EditText) findViewById(R.id.pt_priority);
         et_note = (EditText) findViewById(R.id.pt_note);
@@ -77,8 +124,8 @@ public class newMemoActivity extends AppCompatActivity {
                 new DatePickerDialog(view.getContext(), date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
-        
-        
+
+
         if(getIntent().hasExtra("action")){
             Bundle extras = getIntent().getExtras();
             int action=extras.getInt("action");
@@ -134,45 +181,6 @@ public class newMemoActivity extends AppCompatActivity {
                 et_category.setSelection(num);
             }
         }
-        
-        Button btn_submit = (Button) findViewById(R.id.btn_Submit);
-        Button btn_cancel = (Button) findViewById(R.id.btn_Cancel);
-        
-        btn_submit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent returnIntent = new Intent();
-                String title=et_title.getText().toString();
-                String category=et_category.getSelectedItem().toString();
-                String deadline=et_date.getText().toString();
-                String priorityLevel=et_priority.getText().toString();
-                String notificationIntervals=et_intervals.getSelectedItem().toString();
-                String notificationTime=et_time.getText().toString();
-                String status=et_status.getSelectedItem().toString();
-                String note=et_note.getText().toString();
-                //Memo newItem = new Memo(title , category,deadline, priorityLevel, notificationIntervals, notificationTime, status, note);
-                //MySQLiteHelper db = new MySQLiteHelper(view.getContext());
-                //db.addMemo(newItem);
-                returnIntent.putExtra(Memo.TITLE_CODE, title);
-                returnIntent.putExtra(Memo.CATEGORY_CODE, category);
-                returnIntent.putExtra(Memo.DEADLINE_CODE, deadline);
-                returnIntent.putExtra(Memo.PRIORITYLEVEL_CODE, priorityLevel);
-                returnIntent.putExtra(Memo.NOTIFICATIONINTERVALS_CODE, notificationIntervals);
-                returnIntent.putExtra(Memo.NOTIFICATIONTIME_CODE, notificationTime);
-                returnIntent.putExtra(Memo.STATUS_CODE, status);
-                returnIntent.putExtra(Memo.NOTE_CODE, note);
-                setResult(RESULT_OK, returnIntent);
-                finish();
-            }
-        });
-
-        btn_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setResult(RESULT_CANCELED);
-                finish();
-            }
-        });
     }
 
     private void updateTime() {

@@ -186,6 +186,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         else if(where.equalsIgnoreCase("All")){
             where=" ORDER BY "+ Memo.DEADLINE_CODE+" ASC";
         }
+        //
         // 1. build the query
         String query = "SELECT * FROM " + TABLE_MEMO + where;
         Log.d("getMemoWhere",query);
@@ -369,4 +370,41 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         Log.d("Database","Updated "+dateString);
     }
 
+    public int getOngoingCount(){
+        int x=0;
+        String query="SELECT COUNT(*) FROM " + TABLE_MEMO +" WHERE "+ Memo.STATUS_CODE +" = 'ACTIVE' OR "+ Memo.STATUS_CODE + " = 'OVERDUE' OR " + Memo.STATUS_CODE +" IS NULL ORDER BY "+ Memo.DEADLINE_CODE;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        cursor.moveToFirst();
+        x=Integer.parseInt(cursor.getString(0));
+        db.close();
+        cursor.close();
+        return x;
+    }
+    public void resetAlarms(){
+
+    }
+
+    public int getOverdueCount() {
+        int overdueCount=0;
+        String query="SELECT COUNT(*) FROM " + TABLE_MEMO +" WHERE "+ Memo.STATUS_CODE + " = 'OVERDUE'";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        cursor.moveToFirst();
+        overdueCount=Integer.parseInt(cursor.getString(0));
+        db.close();
+        cursor.close();
+        return overdueCount;
+    }
+    public int getActiveCount() {
+        int activeCount=0;
+        String query="SELECT COUNT(*) FROM " + TABLE_MEMO +" WHERE "+ Memo.STATUS_CODE + " = 'Active'";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        cursor.moveToFirst();
+        activeCount=Integer.parseInt(cursor.getString(0));
+        db.close();
+        cursor.close();
+        return activeCount;
+    }
 }

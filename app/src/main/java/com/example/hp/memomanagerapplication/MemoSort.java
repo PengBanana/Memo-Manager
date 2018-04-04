@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
@@ -28,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import java.text.DateFormat;
+import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -47,7 +49,13 @@ public class MemoSort extends AppCompatActivity
     private RecyclerView recyclerView;
     private MemoAdapter mAdapter;
     public MySQLiteHelper db = new MySQLiteHelper(this);
-
+    SimpleDateFormat mdyFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+    SimpleDateFormat hmFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+    SimpleDateFormat dayFormat = new SimpleDateFormat("dd", Locale.ENGLISH);
+    SimpleDateFormat monthFormat = new SimpleDateFormat("MM", Locale.ENGLISH);
+    SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+    SimpleDateFormat hourFormat = new SimpleDateFormat("HH", Locale.ENGLISH);
+    SimpleDateFormat minuteFormat = new SimpleDateFormat("mm", Locale.ENGLISH);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,9 +75,9 @@ public class MemoSort extends AppCompatActivity
 }
 
     private void dbManipulation() {
-        //db.onUpgrade(db.getReadableDatabase(),1,2);
+        db.onUpgrade(db.getReadableDatabase(),1,2);
         Log.d("memoList", memoList.toString());
-        //insertSampleData();
+        insertSampleData();
         db.updateData();
         memoList.clear();
         memoList.addAll(db.getMemoWhere("OG"));
@@ -78,18 +86,26 @@ public class MemoSort extends AppCompatActivity
     }
 
     private void alarmReciever() {
+        //dd/MM/YYYY
+        long timeNow = System.currentTimeMillis();
+        String alarmDate = mdyFormat.format(timeNow);
+        String alarmTime = hmFormat.format(timeNow);
+        setAlarm(alarmDate, alarmTime);
+        //sample notification
         Log.d("alarmRecievermain", "ran");
         AlarmManager alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlarmReciever.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
         Calendar time = Calendar.getInstance();
         time.setTimeInMillis(System.currentTimeMillis());
-        time.add(Calendar.MINUTE, 1);
+        time.add(Calendar.SECOND, 10);
         alarmMgr.set(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(), pendingIntent);
-
+        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_HALF_HOUR,
+                AlarmManager.INTERVAL_HALF_HOUR, pendingIntent);
     }
 
-    private void setAlarm(String alarmDate, String alarmTime, String alarmIntervals){
+    private void setAlarm(String alarmDate, String alarmTime){
         //TODO: if null checking
         String[] dateSplitter=alarmDate.split("/");
         String[] timeSplitter=alarmTime.split(":");
@@ -99,26 +115,64 @@ public class MemoSort extends AppCompatActivity
         Calendar alarmSetTime = Calendar.getInstance();
         if(alarmDate.isEmpty()){
             alarmSetTime.setTimeInMillis(System.currentTimeMillis());
-            alarmSetTime.add(Calendar.MINUTE, 1);
+            alarmSetTime.add(Calendar.SECOND, 10);
             Log.d("AlarmSetTo2:", alarmTime+"");
         }
         else{
-            int alarmHour=Integer.parseInt(timeSplitter[0]);
-            int alarmMinute=Integer.parseInt(timeSplitter[1]);
-            int alarmSecond=0;
-            int alarmMonth=Integer.parseInt(dateSplitter[0]);
-            int alarmDay=Integer.parseInt(dateSplitter[1]);
+            //alarm once attempt
+            //TODO: COMPARE CURRENT DATE TO ALARM DATE
+            long timeNow=System.currentTimeMillis();
+            int monthNow = Integer.parseInt(monthFormat.format(timeNow));
+            int dayNow = Integer.parseInt(dayFormat.format(timeNow));
+            int yearNow = Integer.parseInt(yearFormat.format(timeNow));
+            int hourNow = Integer.parseInt(hourFormat.format(timeNow));
+            int minuteNow = Integer.parseInt(minuteFormat.format(timeNow));
+            int alarmHour=0;
+            int alarmMinute=0;
+            //instantiating stuff
+            if(timeSplitter.length>0){
+                alarmHour=9;
+                alarmMinute=0;
+            }
+            else{
+                alarmHour=9;
+                alarmMinute=0;
+            }
+            int alarmMonth=Integer.parseInt(dateSplitter[1]);
+            int alarmDay=Integer.parseInt(dateSplitter[0]);
             int alarmYear=Integer.parseInt(dateSplitter[2]);
+            if(alarmHour<hourNow){
+                alarmDay++;
+            }
+            //computing how many to add to curent time
+            int addMonth=alarmMonth-monthNow;
+            int addDay=alarmDay-dayNow;
+            int addYear=alarmYear-yearNow;
+            int addHour=alarmHour-hourNow;
+            int addMinute=alarmMinute-minuteNow;
+            //alternative
+            alarmSetTime.add(Calendar.MONTH, addMonth);
+            alarmSetTime.add(Calendar.DATE, addDay);
+            alarmSetTime.add(Calendar.YEAR, addYear);
+            alarmSetTime.add(Calendar.HOUR, addHour);
+            alarmSetTime.add(Calendar.MINUTE, addMinute);
+
+            //set
+            /*
             alarmSetTime.set(Calendar.DAY_OF_MONTH, alarmDay);
             alarmSetTime.set(Calendar.MONTH, alarmMonth);
             alarmSetTime.set(Calendar.YEAR, alarmYear);
             alarmSetTime.set(Calendar.HOUR_OF_DAY, alarmHour);
             alarmSetTime.set(Calendar.MINUTE, alarmMinute);
             alarmSetTime.set(Calendar.SECOND, alarmSecond);
+            */
             Log.d("AlarmSetTo:", alarmMonth+"/"+alarmDay+"/"+alarmYear+" "+alarmHour+":"+alarmMinute);
-
         }
+        Log.d("Alarm being set to", alarmSetTime+"");
         alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmSetTime.getTimeInMillis(), pendingIntent);
+        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_HALF_HOUR,
+                AlarmManager.INTERVAL_HALF_HOUR, pendingIntent);
     }
 
     private void toolbarAndFloatingActionButton() {
@@ -229,10 +283,9 @@ public class MemoSort extends AppCompatActivity
                             data.getStringExtra(Memo.STATUS_CODE), data.getStringExtra(Memo.NOTE_CODE));
                     db.addMemo(newItem);
                     //get time of notification
-                    setAlarm(deadline, time, notificationIntervals);
+                    //setAlarm(deadline, time, notificationIntervals);
                     getMemoList("OG");
                     Log.d("memoListCount:", memoList.size()+"");
-
                     break;
             }
         }
@@ -294,9 +347,8 @@ public class MemoSort extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        getMemoListAll();
+        getMemoList("OG");
     }
-
 
     private void insertSampleData() {
         Log.d("insertSampleData", "default");
@@ -304,7 +356,7 @@ public class MemoSort extends AppCompatActivity
         Memo sampleMemo = new
                 Memo("WIR-TEC Beta Demo",
                 "Academic",
-                "March 14,2018",
+                "03/14/2018",
                 "Highest",
                 "Weekly",
                 "9:00PM",
@@ -314,7 +366,7 @@ public class MemoSort extends AppCompatActivity
         sampleMemo = new
                 Memo("ITMETHDS Paper",
                 "Academic",
-                "March 16,2018",
+                "03/16/2018",
                 "High",
                 "Daily",
                 "8:00AM",
@@ -324,7 +376,7 @@ public class MemoSort extends AppCompatActivity
         sampleMemo = new
                 Memo("LSCS Internal Meeting",
                 "Organization",
-                "March 09,2018",
+                "03/09/2018",
                 "Medium",
                 "Daily",
                 "10:00AM",
@@ -334,7 +386,7 @@ public class MemoSort extends AppCompatActivity
         sampleMemo = new
                 Memo("BMS Unplugged Linkages",
                 "Organization",
-                "March 10,2018",
+                "03/10/2018",
                 "Low",
                 "Daily",
                 "9:00am",
@@ -345,7 +397,7 @@ public class MemoSort extends AppCompatActivity
         sampleMemo = new
                 Memo("WIR-TEC Beta Demo Again",
                 "Academic",
-                "April 14,2018",
+                "04/14/2018",
                 "Highest",
                 "Weekly",
                 "9:00PM",
@@ -355,7 +407,7 @@ public class MemoSort extends AppCompatActivity
         sampleMemo = new
                 Memo("ITMETHDS Paper Again",
                 "Academic",
-                "April 16,2018",
+                "04/16/2018",
                 "High",
                 "Daily",
                 "8:00AM",
@@ -365,7 +417,7 @@ public class MemoSort extends AppCompatActivity
         sampleMemo = new
                 Memo("LSCS Internal Meeting Again",
                 "Organization",
-                "April 09,2018",
+                "04/09/2018",
                 "Medium",
                 "Daily",
                 "10:00AM",
@@ -375,7 +427,7 @@ public class MemoSort extends AppCompatActivity
         sampleMemo = new
                 Memo("BMS Unplugged Linkages Again",
                 "Organization",
-                "April 10,2018",
+                "04/10/2018",
                 "Low",
                 "Daily",
                 "9:00AM",
@@ -386,7 +438,7 @@ public class MemoSort extends AppCompatActivity
         sampleMemo = new
                 Memo("WIR-TEC Beta Demo Part 3",
                 "Academic",
-                "May 14,2018",
+                "05/14/2018",
                 "Highest",
                 "Weekly",
                 "9:00PM",
@@ -396,7 +448,7 @@ public class MemoSort extends AppCompatActivity
         sampleMemo = new
                 Memo("ITMETHDS Paper Part 3",
                 "Academic",
-                "May 16,2018",
+                "05/16/2018",
                 "High",
                 "Daily",
                 "8:00AM",
@@ -406,7 +458,7 @@ public class MemoSort extends AppCompatActivity
         sampleMemo = new
                 Memo("LSCS Internal Meeting Part 3",
                 "Organization",
-                "May 09,2018",
+                "05/09/2018",
                 "Medium",
                 "Daily",
                 "10:00AM",
@@ -416,7 +468,7 @@ public class MemoSort extends AppCompatActivity
         sampleMemo = new
                 Memo("BMS Unplugged Linkages Part 3",
                 "Organization",
-                "May 10,2018",
+                "04/10/2018",
                 "Low",
                 "Daily",
                 "9:00AM",

@@ -5,16 +5,18 @@
     android:id="@+id/cl_memoDetails"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorAccentSecondary"
     tools:context="com.example.hp.memomanagerapplication.ViewMemoDetails">
 
     <ScrollView
         android:id="@+id/sv_memoDetails"
         android:layout_width="match_parent"
-        android:layout_height="383dp"
+        android:layout_height="390dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:background="@android:color/background_light"
         android:paddingBottom="10dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
