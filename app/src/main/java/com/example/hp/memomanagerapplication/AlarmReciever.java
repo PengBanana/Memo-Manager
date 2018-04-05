@@ -26,10 +26,12 @@ public class AlarmReciever extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d("AlarmReciever:","onReceive-START");
         MySQLiteHelper db = new MySQLiteHelper(context);
+        Intent notificationIntent = new Intent(context, MemoSort.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
         //int ongoingCount=db.getOngoingCount();
         int overdueCount=db.getOverdueCount();
         int activeCount=db.getActiveCount();
-        String grammarSubject="subjects";
+        String grammarSubject="projects";
         String text ="You have "+overdueCount+" overdue and "+activeCount+" active projects";
         //int ongoingCount=0;
         //Toast.makeText(context, "Alarm went off", Toast.LENGTH_SHORT).show();
@@ -39,13 +41,13 @@ public class AlarmReciever extends BroadcastReceiver {
         }
         else if(overdueCount>0&&activeCount<1){
             if(overdueCount<2){
-                grammarSubject="subject";
+                grammarSubject="project";
             }
             text="You have "+overdueCount+" overdue "+grammarSubject;
         }
         else if(activeCount>0&&overdueCount<1){
             if(activeCount<2){
-                grammarSubject="subject";
+                grammarSubject="project";
             }
             text="You have "+activeCount+" active "+grammarSubject;
         }
@@ -57,7 +59,8 @@ public class AlarmReciever extends BroadcastReceiver {
                     .setContentTitle("Project Manager")
                     .setContentText(text)
                     .setAutoCancel(true)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setContentIntent(contentIntent);
 
             notificationManager.notify(0, mBuilder.build());
             Log.d("AlarmReciever:","onReceive-END");
