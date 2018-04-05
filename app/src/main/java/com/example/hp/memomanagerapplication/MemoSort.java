@@ -45,25 +45,31 @@ public class MemoSort extends AppCompatActivity
     public static final int EDITITEM_CODE = 2;
     public static final int DELETEITEM_CODE = 3;
     public static final int CANCELNEWMEMO = 4;
+    public static final String sdFormat="yyyy-MM-dd";
     private ArrayList<Memo> memoList = new ArrayList<>();
     private RecyclerView recyclerView;
     private MemoAdapter mAdapter;
     public MySQLiteHelper db = new MySQLiteHelper(this);
-    SimpleDateFormat mdyFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+
+    SimpleDateFormat mdyFormat = new SimpleDateFormat(sdFormat, Locale.ENGLISH);
     SimpleDateFormat hmFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
     SimpleDateFormat dayFormat = new SimpleDateFormat("dd", Locale.ENGLISH);
     SimpleDateFormat monthFormat = new SimpleDateFormat("MM", Locale.ENGLISH);
     SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy", Locale.ENGLISH);
     SimpleDateFormat hourFormat = new SimpleDateFormat("HH", Locale.ENGLISH);
     SimpleDateFormat minuteFormat = new SimpleDateFormat("mm", Locale.ENGLISH);
+    SimpleDateFormat secondFormat = new SimpleDateFormat("ss", Locale.ENGLISH);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memo_sort);
+        Log.d("MemoSort:","onCreate-START");
         mainActivityMethod();
+        Log.d("MemoSort:","onCreate-END");
     }
 
     public void mainActivityMethod(){
+        Log.d("MemoSort:","mainActivityMethod-START");
         dbManipulation();
         recyclerAndAdapter();
         //getMemoList("Onprogress");
@@ -72,27 +78,29 @@ public class MemoSort extends AppCompatActivity
         alarmReciever();
         //getMemoList("OG");
         //recyclerView.getAdapter().notifyDataSetChanged();
+        Log.d("MemoSort:","mainActivityMethod-END");
 }
 
     private void dbManipulation() {
+        Log.d("MemoSort:","dbManipulation-START");
         db.onUpgrade(db.getReadableDatabase(),1,2);
-        Log.d("memoList", memoList.toString());
         insertSampleData();
         db.updateData();
         memoList.clear();
         memoList.addAll(db.getMemoWhere("OG"));
-        Log.d("memoList",memoList.size()+"");
         //getMemoList("Onprogress");
+        Log.d("MemoSort:","dbManipulation-END");
     }
 
     private void alarmReciever() {
+        Log.d("MemoSort:","alarmReciever-START");
+
         //dd/MM/YYYY
         long timeNow = System.currentTimeMillis();
         String alarmDate = mdyFormat.format(timeNow);
         String alarmTime = hmFormat.format(timeNow);
         setAlarm(alarmDate, alarmTime);
         //sample notification
-        Log.d("alarmRecievermain", "ran");
         AlarmManager alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlarmReciever.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
@@ -100,23 +108,21 @@ public class MemoSort extends AppCompatActivity
         time.setTimeInMillis(System.currentTimeMillis());
         time.add(Calendar.SECOND, 10);
         alarmMgr.set(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(), pendingIntent);
-        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_HALF_HOUR,
-                AlarmManager.INTERVAL_HALF_HOUR, pendingIntent);
+        Log.d("MemoSort:","alarmReciever-END");
     }
 
-    private void setAlarm(String alarmDate, String alarmTime){
+    public void setAlarm(String alarmDate, String alarmTime){
+        Log.d("MemoSort:","setAlarm-START");
         //TODO: if null checking
         String[] dateSplitter=alarmDate.split("/");
         String[] timeSplitter=alarmTime.split(":");
-        AlarmManager alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlarmReciever.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
         Calendar alarmSetTime = Calendar.getInstance();
+        AlarmManager alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         if(alarmDate.isEmpty()){
             alarmSetTime.setTimeInMillis(System.currentTimeMillis());
             alarmSetTime.add(Calendar.SECOND, 10);
-            Log.d("AlarmSetTo2:", alarmTime+"");
         }
         else{
             //alarm once attempt
@@ -127,9 +133,11 @@ public class MemoSort extends AppCompatActivity
             int yearNow = Integer.parseInt(yearFormat.format(timeNow));
             int hourNow = Integer.parseInt(hourFormat.format(timeNow));
             int minuteNow = Integer.parseInt(minuteFormat.format(timeNow));
-            int alarmHour=0;
-            int alarmMinute=0;
+            int secondNow = Integer.parseInt(secondFormat.format(timeNow));
+            //int alarmHour=9;
+            //int alarmMinute=0;
             //instantiating stuff
+            /*
             if(timeSplitter.length>0){
                 alarmHour=9;
                 alarmMinute=0;
@@ -144,6 +152,14 @@ public class MemoSort extends AppCompatActivity
             if(alarmHour<hourNow){
                 alarmDay++;
             }
+            */
+            //attempt to alarm at 9am everyday
+            alarmSetTime.set(yearNow, monthNow, dayNow,hourNow, minuteNow+1, 0);
+            alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmSetTime.getTimeInMillis(), pendingIntent);
+            alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    alarmSetTime.getTimeInMillis(),
+                    AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
+            /*
             //computing how many to add to curent time
             int addMonth=alarmMonth-monthNow;
             int addDay=alarmDay-dayNow;
@@ -166,16 +182,19 @@ public class MemoSort extends AppCompatActivity
             alarmSetTime.set(Calendar.MINUTE, alarmMinute);
             alarmSetTime.set(Calendar.SECOND, alarmSecond);
             */
-            Log.d("AlarmSetTo:", alarmMonth+"/"+alarmDay+"/"+alarmYear+" "+alarmHour+":"+alarmMinute);
         }
-        Log.d("Alarm being set to", alarmSetTime+"");
-        alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmSetTime.getTimeInMillis(), pendingIntent);
+        /*alarmMgr.set(AlarmManager.RTC_WAKEUP, alarmSetTime.getTimeInMillis(), pendingIntent);
         alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_HALF_HOUR,
                 AlarmManager.INTERVAL_HALF_HOUR, pendingIntent);
+        Log.d("MemoSort:","setAlarm-END");
+        */
     }
 
+
+
     private void toolbarAndFloatingActionButton() {
+        Log.d("MemoSort:","toolbarAndFloatingActionButton-START");
 
         //Toolbar and FAB
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -200,37 +219,45 @@ public class MemoSort extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        Log.d("MemoSort:","toolbarAndFloatingActionButton-END");
     }
 
     private void recyclerAndAdapter() {
+        Log.d("MemoSort:","recyclerAndAdapter-START");
         recyclerView = (RecyclerView) findViewById(R.id.rv_itemList);
         mAdapter = new MemoAdapter(memoList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
+        Log.d("MemoSort:","recyclerAndAdapter-END");
     }
 
     @Override
     public void onBackPressed() {
+        Log.d("MemoSort:","onBackPressed-START");
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
+        Log.d("MemoSort:","onBackPressed-END");
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d("MemoSort:","onCreateOptionsMenu-START");
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.memo_sort, menu);
+        Log.d("MemoSort:","onCreateOptionsMenu-END");
         return true;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        Log.d("MemoSort:","onNavigationItemSelected-START");
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         String where="All";
@@ -250,24 +277,26 @@ public class MemoSort extends AppCompatActivity
         getMemoList(where);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+        Log.d("MemoSort:","onNavigationItemSelected-END");
         return true;
     }
 
     private void getMemoList(String where) {
+        Log.d("MemoSort:","getMemoList-START");
         memoList.clear();
         memoList.addAll(db.getMemoWhere(where));
-        Log.d("getMemoList by "+where+":", memoList.size()+"");
         //orderBy(Memo.DEADLINE_CODE);
         recyclerView.getAdapter().notifyDataSetChanged();
+        Log.d("MemoSort:","getMemoList-END");
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("MemoSort:","onActivityResult-START");
         if(resultCode == RESULT_OK){
             switch (requestCode) {
                 case NEWMEMOACTIVITY_CODE:
-                    Log.d("new memo",requestCode+"");
                     /*
                     String title, String category, String deadline,
                 String priorityLevel, String notificationIntervals,
@@ -275,7 +304,7 @@ public class MemoSort extends AppCompatActivity
                      */
                     String deadline=data.getStringExtra(Memo.DEADLINE_CODE);
                     String time=data.getStringExtra(Memo.NOTIFICATIONTIME_CODE);
-                    String notificationIntervals=data.getStringExtra(Memo.NOTIFICATIONINTERVALS_CODE);
+                    String notificationIntervals="Daily";
                     Memo newItem = new Memo(
                             data.getStringExtra(Memo.TITLE_CODE), data.getStringExtra(Memo.CATEGORY_CODE),
                             deadline ,data.getStringExtra(Memo.PRIORITYLEVEL_CODE),
@@ -285,22 +314,25 @@ public class MemoSort extends AppCompatActivity
                     //get time of notification
                     //setAlarm(deadline, time, notificationIntervals);
                     getMemoList("OG");
-                    Log.d("memoListCount:", memoList.size()+"");
+
                     break;
             }
         }
+        Log.d("MemoSort:","onActivityResult-END");
     }
 
     public void getMemoListAll(){
+        Log.d("MemoSort:","getMemoListAll-START");
         db.updateData();
         memoList.clear();
         memoList.addAll(db.getAllMemos());
-        Log.d("memoListuponAdd:", memoList.size()+"");
         recyclerView.getAdapter().notifyDataSetChanged();
+        Log.d("MemoSort:","getMemoListAll-END");
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d("MemoSort:","getMemoListAll-START");
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -329,34 +361,39 @@ public class MemoSort extends AppCompatActivity
         }
 
         recyclerView.getAdapter().notifyDataSetChanged();
+        Log.d("MemoSort:","getMemoListAll-END");
         return super.onOptionsItemSelected(item);
     }
 
     private void orderBy(String Code) {
-        Log.d("orderBy:", Code);
-            db.useTemporaryTable();
-            for(int i=0; i<memoList.size(); i++){
-                db.addTempMemo(memoList.get(i));
-            }
-            memoList.clear();
-            memoList.addAll(db.getTempMemoBy(Code));
-            recyclerView.getAdapter().notifyDataSetChanged();
+        Log.d("MemoSort:","orderBy-START");
+        db.useTemporaryTable();
+        for(int i=0; i<memoList.size(); i++){
+            db.addTempMemo(memoList.get(i));
+        }
+        memoList.clear();
+        memoList.addAll(db.getTempMemoBy(Code));
+        recyclerView.getAdapter().notifyDataSetChanged();
+        Log.d("MemoSort:","orderBy-END");
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d("MemoSort:","onResume-START");
+        db.updateData();
         getMemoList("OG");
+        Log.d("MemoSort:","onResume-END");
     }
 
     private void insertSampleData() {
-        Log.d("insertSampleData", "default");
+        Log.d("MemoSort:","insertSampleData-START");
         //String title, String category, String deadline, String priorityLevel, String notificationIntervals, String notificationTime, String status
         Memo sampleMemo = new
                 Memo("WIR-TEC Beta Demo",
                 "Academic",
-                "03/14/2018",
+                "2018-03-14",
                 "Highest",
                 "Weekly",
                 "9:00PM",
@@ -366,7 +403,7 @@ public class MemoSort extends AppCompatActivity
         sampleMemo = new
                 Memo("ITMETHDS Paper",
                 "Academic",
-                "03/16/2018",
+                "2018-03-16",
                 "High",
                 "Daily",
                 "8:00AM",
@@ -376,7 +413,7 @@ public class MemoSort extends AppCompatActivity
         sampleMemo = new
                 Memo("LSCS Internal Meeting",
                 "Organization",
-                "03/09/2018",
+                "2018-03-04",
                 "Medium",
                 "Daily",
                 "10:00AM",
@@ -386,7 +423,7 @@ public class MemoSort extends AppCompatActivity
         sampleMemo = new
                 Memo("BMS Unplugged Linkages",
                 "Organization",
-                "03/10/2018",
+                "2018-03-10",
                 "Low",
                 "Daily",
                 "9:00am",
@@ -397,7 +434,7 @@ public class MemoSort extends AppCompatActivity
         sampleMemo = new
                 Memo("WIR-TEC Beta Demo Again",
                 "Academic",
-                "04/14/2018",
+                "2018-04-14",
                 "Highest",
                 "Weekly",
                 "9:00PM",
@@ -407,7 +444,7 @@ public class MemoSort extends AppCompatActivity
         sampleMemo = new
                 Memo("ITMETHDS Paper Again",
                 "Academic",
-                "04/16/2018",
+                "2018-04-16",
                 "High",
                 "Daily",
                 "8:00AM",
@@ -417,7 +454,7 @@ public class MemoSort extends AppCompatActivity
         sampleMemo = new
                 Memo("LSCS Internal Meeting Again",
                 "Organization",
-                "04/09/2018",
+                "2018-09-04",
                 "Medium",
                 "Daily",
                 "10:00AM",
@@ -427,7 +464,7 @@ public class MemoSort extends AppCompatActivity
         sampleMemo = new
                 Memo("BMS Unplugged Linkages Again",
                 "Organization",
-                "04/10/2018",
+                "2018-04-10",
                 "Low",
                 "Daily",
                 "9:00AM",
@@ -438,7 +475,7 @@ public class MemoSort extends AppCompatActivity
         sampleMemo = new
                 Memo("WIR-TEC Beta Demo Part 3",
                 "Academic",
-                "05/14/2018",
+                "2018-05-11",
                 "Highest",
                 "Weekly",
                 "9:00PM",
@@ -448,7 +485,7 @@ public class MemoSort extends AppCompatActivity
         sampleMemo = new
                 Memo("ITMETHDS Paper Part 3",
                 "Academic",
-                "05/16/2018",
+                "2018-05-16",
                 "High",
                 "Daily",
                 "8:00AM",
@@ -458,7 +495,7 @@ public class MemoSort extends AppCompatActivity
         sampleMemo = new
                 Memo("LSCS Internal Meeting Part 3",
                 "Organization",
-                "05/09/2018",
+                "2018-05-09",
                 "Medium",
                 "Daily",
                 "10:00AM",
@@ -468,12 +505,13 @@ public class MemoSort extends AppCompatActivity
         sampleMemo = new
                 Memo("BMS Unplugged Linkages Part 3",
                 "Organization",
-                "04/10/2018",
+                "2018-04-10",
                 "Low",
                 "Daily",
                 "9:00AM",
                 "OVERDUE",
                 "Remind External EVP and Corporel VP");
         db.addMemo(sampleMemo);
+        Log.d("MemoSort:","insertSampleData-END");
     }
 }

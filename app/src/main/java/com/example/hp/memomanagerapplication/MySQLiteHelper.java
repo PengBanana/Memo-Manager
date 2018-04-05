@@ -26,7 +26,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "MemoDB";
     private static final String TABLE_MEMO = "memos";
     private static final String KEY_ID = "id";
-    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+    SimpleDateFormat sdf = new SimpleDateFormat(MemoSort.sdFormat, Locale.ENGLISH);
+    SimpleDateFormat tf = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
     private static final String[] COLUMNS = {
             Memo.ID_CODE,
             Memo.TITLE_CODE,
@@ -55,7 +56,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 Memo.NOTIFICATIONTIME_CODE+" TEXT, "+
                 Memo.PRIORITYLEVEL_CODE+" TEXT, "+
                 Memo.STATUS_CODE+" TEXT"+")";
-        Log.d("Create Database Code:", CREATE_MEMO_TABLE);
         // create books table
         db.execSQL(CREATE_MEMO_TABLE);
     }
@@ -71,7 +71,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     public void addMemo(Memo item){
         //for logging
-        Log.d("addMemo", item.toString());
 
         // 1. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
@@ -128,7 +127,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         item.setStatus(cursor.getString(8));
 
         //log
-        Log.d("getBook("+id+")", item.toString());
 
         // 5. return book
         return item;
@@ -163,7 +161,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-        Log.d("getAllBooks()", memoList.toString());
 
         // return books
         return memoList;
@@ -172,24 +169,23 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         ArrayList<Memo> memoList = new ArrayList<>();
 
         if(where.equalsIgnoreCase("OG")){
-            where=" WHERE "+ Memo.STATUS_CODE +" = 'ACTIVE' OR "+ Memo.STATUS_CODE + " = 'OVERDUE' OR " + Memo.STATUS_CODE +" IS NULL ORDER BY "+ Memo.DEADLINE_CODE+" ASC";
+            where=" WHERE "+ Memo.STATUS_CODE +" = 'ACTIVE' OR "+ Memo.STATUS_CODE + " = 'OVERDUE' OR " + Memo.STATUS_CODE +" IS NULL ORDER BY "+ Memo.DEADLINE_CODE+" DESC";
         }
         else if(where.equalsIgnoreCase("OVERDUE")){
-            where=" WHERE "+ Memo.STATUS_CODE +" = 'OVERDUE' ORDER BY "+ Memo.DEADLINE_CODE+" ASC";
+            where=" WHERE "+ Memo.STATUS_CODE +" = 'OVERDUE' ORDER BY "+ Memo.DEADLINE_CODE+" DESC";
         }
         else if(where.equalsIgnoreCase("ACTIVE")){
-            where=" WHERE "+ Memo.STATUS_CODE +" = 'ACTIVE' ORDER BY "+ Memo.DEADLINE_CODE+" ASC";
+            where=" WHERE "+ Memo.STATUS_CODE +" = 'ACTIVE' ORDER BY "+ Memo.DEADLINE_CODE+" DESC";
         }
         else if(where.equalsIgnoreCase("Complete")){
-            where=" WHERE "+ Memo.STATUS_CODE +" = 'COMPLETE' ORDER BY "+ Memo.DEADLINE_CODE+" ASC";
+            where=" WHERE "+ Memo.STATUS_CODE +" = 'COMPLETE' ORDER BY "+ Memo.DEADLINE_CODE+" DESC";
         }
         else if(where.equalsIgnoreCase("All")){
-            where=" ORDER BY "+ Memo.DEADLINE_CODE+" ASC";
+            where=" ORDER BY "+ Memo.DEADLINE_CODE+" DESC";
         }
         //
         // 1. build the query
         String query = "SELECT * FROM " + TABLE_MEMO + where;
-        Log.d("getMemoWhere",query);
         // 2. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
@@ -213,7 +209,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 memoList.add(item);
             } while (cursor.moveToNext());
         }
-        Log.d("getMemoWhere", memoList.size()+"");
 
         // return books
         return memoList;
@@ -262,7 +257,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close();
 
         //log
-        Log.d("deleteBook", item.toString());
     }
 
     public void useTemporaryTable(){
@@ -280,7 +274,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 Memo.NOTIFICATIONTIME_CODE+" TEXT, "+
                 Memo.PRIORITYLEVEL_CODE+" TEXT, "+
                 Memo.STATUS_CODE+" TEXT"+")";
-        Log.d("Create Database Code:", "TemporaryMemos used");
         // create books table
         db.execSQL(CREATE_MEMO_TABLE);
     }
@@ -308,7 +301,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close();
     }
     public ArrayList<Memo> getTempMemoBy(String Code){
-        Log.d("getTempMemoBy =>", Code);
         ArrayList<Memo> memoList=new ArrayList<>();
         // 1. build the query
         String query = "SELECT  * FROM " + "TemporaryMemos";
@@ -350,7 +342,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-        Log.d("getAllTemporaryBooks()", memoList.toString());
 
         // return books
 
@@ -360,14 +351,18 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         long currentdate = System.currentTimeMillis();
         String dateString = sdf.format(currentdate);
+        String timeString = tf.format(currentdate);
         //UPDATE `acadsosd`.`studentathleteprofile` SET `studentDateOfBirth`='1996-10-18' WHERE `studentIDNumber`='11327219';
         String[] args={};
 
         ContentValues values = new ContentValues();
         values.put(Memo.STATUS_CODE, "OVERDUE"); // get title
-        db.update(TABLE_MEMO, values, Memo.DEADLINE_CODE +" > "+dateString+" AND " + Memo.STATUS_CODE + " IS NOT 'OVERDUE' AND " + Memo.STATUS_CODE +" IS NOT 'COMPLETE'", args);
+        db.update(TABLE_MEMO, values, Memo.DEADLINE_CODE +" > "+dateString+" AND " +
+                //Memo.NOTIFICATIONTIME_CODE+" > "+ timeString+" AND "+
+                Memo.STATUS_CODE + " IS NOT 'OVERDUE' AND " +
+                Memo.STATUS_CODE + " IS NOT 'COMPLETE'"+
+                "", args);
         db.close();
-        Log.d("Database","Updated "+dateString);
     }
 
     public int getOngoingCount(){
@@ -380,9 +375,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close();
         cursor.close();
         return x;
-    }
-    public void resetAlarms(){
-
     }
 
     public int getOverdueCount() {
@@ -406,5 +398,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close();
         cursor.close();
         return activeCount;
+    }
+
+    public void markAsComplete(int itemId) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            String[] args={};
+            ContentValues values = new ContentValues();
+            values.put(Memo.STATUS_CODE, "COMPLETE"); // get title
+            db.update(TABLE_MEMO, values, Memo.ID_CODE +" IS '"+itemId+"'"+
+                    "", args);
+            db.close();
+
     }
 }

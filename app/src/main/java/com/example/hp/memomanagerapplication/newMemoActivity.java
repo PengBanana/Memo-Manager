@@ -20,7 +20,7 @@ public class newMemoActivity extends AppCompatActivity {
     public EditText et_date, et_time, et_title, et_priority, et_note;
     public Spinner et_status, et_intervals, et_category;
     //date picker variables
-    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
     SimpleDateFormat tf = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
     Calendar myCalendar = Calendar.getInstance();
 
@@ -47,7 +47,7 @@ public class newMemoActivity extends AppCompatActivity {
                 String category=et_category.getSelectedItem().toString();
                 String deadline=et_date.getText().toString();
                 String priorityLevel=et_priority.getText().toString();
-                String notificationIntervals=et_intervals.getSelectedItem().toString();
+                //String notificationIntervals=et_intervals.getSelectedItem().toString();
                 String notificationTime=et_time.getText().toString();
                 String status=et_status.getSelectedItem().toString();
                 String note=et_note.getText().toString();
@@ -58,7 +58,7 @@ public class newMemoActivity extends AppCompatActivity {
                 returnIntent.putExtra(Memo.CATEGORY_CODE, category);
                 returnIntent.putExtra(Memo.DEADLINE_CODE, deadline);
                 returnIntent.putExtra(Memo.PRIORITYLEVEL_CODE, priorityLevel);
-                returnIntent.putExtra(Memo.NOTIFICATIONINTERVALS_CODE, notificationIntervals);
+                //returnIntent.putExtra(Memo.NOTIFICATIONINTERVALS_CODE, notificationIntervals);
                 returnIntent.putExtra(Memo.NOTIFICATIONTIME_CODE, notificationTime);
                 returnIntent.putExtra(Memo.STATUS_CODE, status);
                 returnIntent.putExtra(Memo.NOTE_CODE, note);
@@ -82,7 +82,7 @@ public class newMemoActivity extends AppCompatActivity {
         et_note = (EditText) findViewById(R.id.pt_note);
         et_status =(Spinner) findViewById(R.id.sr_status);
         et_category =(Spinner) findViewById(R.id.sr_category);
-        et_intervals =(Spinner) findViewById(R.id.sr_intervals);
+        //et_intervals =(Spinner) findViewById(R.id.sr_intervals);
         //Time picker
         long currentdate = System.currentTimeMillis();
         String dateString = sdf.format(currentdate);
@@ -162,7 +162,7 @@ public class newMemoActivity extends AppCompatActivity {
                 else if(intervalsText.equalsIgnoreCase("weekly")){
                     intervalsNum=2;
                 }
-                et_intervals.setSelection(intervalsNum);
+                //et_intervals.setSelection(intervalsNum);
 
                 String categoryText=itemEdited.getCategory();
                 int num=0;

@@ -27,6 +27,7 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MyViewHolder> 
 
         public MyViewHolder(View view) {
             super(view);
+            Log.d("MemoAdapter:","MyViewHolder-START");
             title = (TextView) view.findViewById(R.id.tv_itemTitle);
             deadline = (TextView) view.findViewById(R.id.tv_itemDate);
             //TODO: limit note to a number of characters
@@ -38,7 +39,6 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MyViewHolder> 
                     //TODO: on item Click
                     //gets item position
                     int itemClicked=getAdapterPosition();
-                    Log.d("MyViewHolder","Clicked Item Number:"+itemClicked);
                     Intent viewMemoDetailsIntent = new Intent(view.getContext(), ViewMemoDetails.class);
                     Memo memoItem = memoList.get(itemClicked);
                     int itemId = memoItem.getId();
@@ -60,6 +60,8 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MyViewHolder> 
                     view.getContext().startActivity(viewMemoDetailsIntent);
                 }
             });
+
+            Log.d("MemoAdapter:","MyViewHolder-END");
         }
     }
 
@@ -71,13 +73,16 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MyViewHolder> 
     //TODO: addEditButton method here
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        Log.d("MemoAdapter:","onCreateViewHolder-START");
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_memo, parent, false);
+        Log.d("MemoAdapter:","onCreateViewHolder-END");
         return new MyViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
+        Log.d("MemoAdapter:","onBindViewHolder-START");
         Memo memo = memoList.get(position);
         holder.title.setText(memo.getTitle());
         holder.deadline.setText(memo.getDeadline());
@@ -94,6 +99,7 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MyViewHolder> 
         else if(status.equalsIgnoreCase("overdue")){
             holder.status.setTextColor(Color.parseColor("#cc3232"));
         }
+        Log.d("MemoAdapter:","onBindViewHolder-END");
     }
 
     @Override

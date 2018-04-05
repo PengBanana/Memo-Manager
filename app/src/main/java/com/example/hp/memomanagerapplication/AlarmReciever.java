@@ -24,26 +24,36 @@ public class AlarmReciever extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d("AlarmReciever:","onReceive-START");
         MySQLiteHelper db = new MySQLiteHelper(context);
         //int ongoingCount=db.getOngoingCount();
         int overdueCount=db.getOverdueCount();
         int activeCount=db.getActiveCount();
+        String text ="You have "+overdueCount+" overdue and "+activeCount+" active projects";
         //int ongoingCount=0;
-        Log.d("AlarmReciever:", "onRecieve");
         //Toast.makeText(context, "Alarm went off", Toast.LENGTH_SHORT).show();
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Service.NOTIFICATION_SERVICE);
-        NotificationCompat.Builder mBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(context
-        )
-                .setSmallIcon(R.mipmap.memo_manager_icon)
-                .setContentTitle("Project Manager")
-                .setContentText("You have "+overdueCount+" overdue and "+activeCount+" active projects")
-                .setAutoCancel(true)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        notificationManager.notify(0, mBuilder.build());
-    }
+        if(overdueCount>0&&activeCount>0){
+            text="You have "+overdueCount+" overdue and "+activeCount+" active projects";
+        }
+        else if(overdueCount>0&&activeCount<1){
+            text="You have "+overdueCount+" overdue projects";
+        }
+        else if(activeCount>0&&overdueCount<1){
+            text="You have "+activeCount+" active projects";
+        }
+        if(overdueCount>0||activeCount>0){
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Service.NOTIFICATION_SERVICE);
+            NotificationCompat.Builder mBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(context
+            )
+                    .setSmallIcon(R.mipmap.memo_manager_icon)
+                    .setContentTitle("Project Manager")
+                    .setContentText(text)
+                    .setAutoCancel(true)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
-    private void resetAlarm() {
-
+            notificationManager.notify(0, mBuilder.build());
+            Log.d("AlarmReciever:","onReceive-END");
+        }
     }
 
 }
