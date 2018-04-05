@@ -20,7 +20,7 @@ public class newMemoActivity extends AppCompatActivity {
     public EditText et_date, et_time, et_title, et_priority, et_note;
     public Spinner et_status, et_intervals, et_category;
     //date picker variables
-    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+    SimpleDateFormat sdf = new SimpleDateFormat(MemoSort.sdFormat, Locale.ENGLISH);
     SimpleDateFormat tf = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
     Calendar myCalendar = Calendar.getInstance();
 

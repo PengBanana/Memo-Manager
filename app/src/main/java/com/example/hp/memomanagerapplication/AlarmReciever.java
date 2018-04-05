@@ -29,17 +29,25 @@ public class AlarmReciever extends BroadcastReceiver {
         //int ongoingCount=db.getOngoingCount();
         int overdueCount=db.getOverdueCount();
         int activeCount=db.getActiveCount();
+        String grammarSubject="subjects";
         String text ="You have "+overdueCount+" overdue and "+activeCount+" active projects";
         //int ongoingCount=0;
         //Toast.makeText(context, "Alarm went off", Toast.LENGTH_SHORT).show();
+        Log.d("AlarmReciever:","onReceive-"+text);
         if(overdueCount>0&&activeCount>0){
-            text="You have "+overdueCount+" overdue and "+activeCount+" active projects";
+            text="You have "+overdueCount+" overdue and "+activeCount+" active "+grammarSubject;
         }
         else if(overdueCount>0&&activeCount<1){
-            text="You have "+overdueCount+" overdue projects";
+            if(overdueCount<2){
+                grammarSubject="subject";
+            }
+            text="You have "+overdueCount+" overdue "+grammarSubject;
         }
         else if(activeCount>0&&overdueCount<1){
-            text="You have "+activeCount+" active projects";
+            if(activeCount<2){
+                grammarSubject="subject";
+            }
+            text="You have "+activeCount+" active "+grammarSubject;
         }
         if(overdueCount>0||activeCount>0){
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(Service.NOTIFICATION_SERVICE);

@@ -83,8 +83,8 @@ public class MemoSort extends AppCompatActivity
 
     private void dbManipulation() {
         Log.d("MemoSort:","dbManipulation-START");
-        db.onUpgrade(db.getReadableDatabase(),1,2);
-        insertSampleData();
+        //db.onUpgrade(db.getReadableDatabase(),1,2);
+        //insertSampleData();
         db.updateData();
         memoList.clear();
         memoList.addAll(db.getMemoWhere("OG"));
@@ -427,7 +427,7 @@ public class MemoSort extends AppCompatActivity
                 "Low",
                 "Daily",
                 "9:00am",
-                "OVERDUE",
+                "ACTIVE",
                 "Remind External EVP and Corporel VP");
         db.addMemo(sampleMemo);
 
@@ -468,7 +468,7 @@ public class MemoSort extends AppCompatActivity
                 "Low",
                 "Daily",
                 "9:00AM",
-                "OVERDUE",
+                "ACTIVE",
                 "Remind External EVP and Corporel VP");
         db.addMemo(sampleMemo);
 
@@ -509,7 +509,7 @@ public class MemoSort extends AppCompatActivity
                 "Low",
                 "Daily",
                 "9:00AM",
-                "OVERDUE",
+                "ACTIVE",
                 "Remind External EVP and Corporel VP");
         db.addMemo(sampleMemo);
         Log.d("MemoSort:","insertSampleData-END");
